@@ -1,4 +1,4 @@
-INSERT INTO resources (resource_id, user_id, message, date)
+INSERT INTO commments (resource_id, user_id, message, date)
 VALUES
 (1, 2, 'Neat article', '2020-01-01T00:00:00.000Z'),
 (1, 3, 'WOW jQuery is so cool!', '2020-01-01T01:00:00.000Z'),
