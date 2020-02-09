@@ -34,19 +34,23 @@ app.use("/styles", sass({
 }));
 app.use(express.static("public"));
 
-// Separated Routes for each Resource
-// Note: Feel free to replace the example routes below with your own
+
+// /api/endpoints
+/* const apiRouter = express.Router();
+apiRoutes(apiRouter, database);
+app.use('/api', apiRouter); */
+app.get("/main", (req, res) => {
+  res.render("main_no_cookies");
+});
+
+// /users/endpoints
 const usersRoutes = require("./routes/users");
 const userRouter  = express.Router();
-
 app.use("/api/users", usersRoutes(userRouter, db));
 
 
 
 const widgetsRoutes = require("./routes/widgets");
-
-
-
 app.use("/api/widgets", widgetsRoutes(db));
 // Note: mount other resources here, using the same pattern above
 
