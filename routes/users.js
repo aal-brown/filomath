@@ -5,13 +5,10 @@
  * See: https://expressjs.com/en/guide/using-middleware.html#middleware.router
  */
 
-const express = require('express');
-const userRouter  = express.Router();
-
 //At this moment, all this is doing really is displaying the user data to the page when we go to /api/users. db will be a database object that has the query method as part of it.
 
 
-module.exports = function(database) {
+module.exports = function(userRouter, database) {
   userRouter.get("/", (req, res) => {
     database.query(`SELECT * FROM users;`)
       .then(data => {
