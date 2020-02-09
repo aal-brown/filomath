@@ -1,5 +1,5 @@
 INSERT INTO resource_categories (resource_id, category_id)
-VALUE (1,6),
+VALUES (1,6),
 (2,6),
 (3,6),
 (4,6),
