@@ -18,21 +18,20 @@ const addUser = function(userInfo, db) {
   return db.query(`
   INSERT INTO users (name, username, email, password)
   VALUES ($1, $2, $3, $4)
-  returning *;
+  RETURNING *;
   `,values)
     .then((res) => res.rows[0]);
 };
 
 const checkUsername = function(userName, db) {
-  db.query(`
+  return db.query(`
   SELECT username
   FROM users
-  WHERE username = $1
+  WHERE username = $1;
   `,[userName])
-    .then(() => {
-      console.log("inside the .then function of checkUsername");
-      return true})
-    .catch(() => {return false});
+    .then((res) => {
+      return (res.rows.length > 0 ? true : false);
+    });
 };
 
 module.exports = {

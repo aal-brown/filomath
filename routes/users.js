@@ -75,26 +75,34 @@ module.exports = function(userRouter, database) {
   });
 
 //I will need to handle whether the username is already taken or not or if that email is already being used
+
   userRouter.post("/register", (req, res) => {
     const userInfo = req.body;
     console.log(userInfo.username)
-    let exists = checkUsername(userInfo.username, database);
-    console.log(exists)
 
-    if (exists) {
-      res.send("Error, username taken");
-    }
-    userInfo.password = bcrypt.hashSync(userInfo.password, 12);
-    addUser(userInfo, database)
-      .then((user) => {
-        if (!user) {
-          res.redirect("/main)");
-          return;
+    checkUsername(userInfo.username, database)
+      .then((exists) => {
+
+        if (exists) {
+          res.send("Error, username taken");
+
+        } else {
+          userInfo.password = bcrypt.hashSync(userInfo.password, 12);
+
+          addUser(userInfo, database)
+            .then((user) => {
+
+              if (!user) {
+                res.redirect("/main)");
+                return;
+              }
+              req.session.userId = user.id;
+              res.redirect("/user/");
+            })
+            .catch((err) => res.send(err));
         }
-        req.session.userId = user.id;
-        res.redirect("/user/");
       })
-      .catch((err) => res.send(err));
+      .catch((err) => err);
   });
 
   return userRouter;
