@@ -1,5 +1,11 @@
-
+/*
 $(document).ready(() => {
+
+
+
+
+
+
 
 $("#logout").on("click", function(event) {
     event.preventDefault();
@@ -7,8 +13,17 @@ $("#logout").on("click", function(event) {
     $.ajax({
       url:"/user/logout",
       method: "PUT"
-    }).then();
+    }).then(() => {
+      window.location.href = "/main";
+    });
 
   });
 
-});
+
+
+
+
+
+
+}); */
+
