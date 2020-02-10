@@ -3,6 +3,6 @@ CREATE TABLE ratings (
   id SERIAL PRIMARY KEY NOT NULL,
   resource_id INTEGER REFERENCES resources(id) ON DELETE CASCADE,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  rating INTEGER CHECK (rating >= 0 AND rating <= 5) DEFAULT 0
+  rating INTEGER CHECK (rating >= 0 AND rating <= 5) DEFAULT 5
 );
 

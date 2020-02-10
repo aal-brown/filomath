@@ -10,6 +10,34 @@ const getUserWithEmail = function(email,db) {
     });
 };
 
+//Function to retrive all resources. It will take in 4 parameters, the userId, the database the 'where' parameter and then a sort by parameter.""
+const getUserResources = function(userID,db) {
+  let resObject;
+  return db.query(`
+  SELECT resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, count(likes.resource_id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.user_id = 1 and ratings.resource_id = resources.id) as user_rating
+  FROM resources
+  JOIN ratings AS t ON resources.id = t.resource_id
+  JOIN likes ON resources.id = likes.resource_id
+  WHERE resources.user_id = $1
+  GROUP BY resources.id;
+  `,[userID])
+    .then((res) => {
+      resObject = res.rows;
+      return db.query(`
+      SELECT categories.category
+      FROM resources
+      JOIN resource_categories ON resources.id = resource_categories.resource_id
+      JOIN categories ON resource_categories.category_id = categories.id
+      WHERE resources.user_id = $1;
+      `,[userID]);
+    })
+    .then((res) => {
+      const finalObj = Object.assign(resObject, res);
+      return finalObj;
+    });
+};
+
+
 //Function to add a user to the database
 const addUser = function(userInfo, db) {
   console.log("Im inside addUser")
@@ -37,6 +65,7 @@ const checkUsername = function(userName, db) {
 module.exports = {
   getUserWithEmail,
   addUser,
-  checkUsername
+  checkUsername,
+  getUserResources
 };
 

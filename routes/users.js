@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, addUser, checkUsername } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, addUser, checkUsername, getUserResources } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -14,24 +14,24 @@ const { getUserWithEmail, addUser, checkUsername } = require("../public/scripts/
 
 module.exports = function(userRouter, database) {
   userRouter.get("/", (req, res) => {
-  /*   database.query(`SELECT * FROM users;`)
-      .then(data => {
-        const users = data.rows;
-        res.json({ users });
-      })
-      .catch(err => {
-        res
-          .status(500)
-          .json({ error: err.message });
-      }); */
 
     let userID = req.session.userID;
 
     if (!userID) {
-      res.redirect("/main");
+      return res.redirect("/main");
     }
     res.render("index");
-});
+  });
+
+
+  userRouter.get("/uresources", (req, res) => {
+    let userID = req.session.userID;
+    if (!userID) {
+      return res.redirect("/main");
+    }
+    return getUserResources(userID,database)
+      .then((userResources) => userResources);
+  });
 
   //Check if a user exists with a given username and password
 
@@ -62,6 +62,16 @@ module.exports = function(userRouter, database) {
         res.send(err)
       });
   });
+
+  userRouter.post("/loadResources", (req, res) => {
+    let userID = req.session.userID;
+
+    getUserResources(userID, db).then((res) => {
+      console.log(res);
+    });
+  });
+
+
 
 
   userRouter.post("/logout", (req, res) => {
