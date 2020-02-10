@@ -48,40 +48,35 @@ module.exports = function(userRouter, database) {
   exports.login = login;
 
   userRouter.post('/login', (req, res) => {
-    console.log("inside the post router");
     const {email, password} = req.body;
-    console.log("req.body",req.body)
     login(email, password)
       .then((user) => {
-        console.log("inside post, looking at user",user)
         if (!user) {
-          console.log("There was an error!","user")
           res.send({error: "error"});
           return;
         }
-        console.log("This is passed the then error")
         req.session.userID = user.id;
-        console.log("I got to the redirect")
-        res.redirect("/");
+        res.redirect("/user/");
       })
       .catch((err) => {
-       console.log("Halp! I'm inside catch!")
         res.send(err)
       });
   });
 
-  userRouter.put("/", (req, res) => {
-    console.log("inside the put router for the logout")
+  userRouter.put("/logout", (req, res) => {
     let userID = req.session.userID;
 
     if (!userID) {
-      console.log("Am I in the fail handler?")
-      res.redirect("/main");
+      res.redirect(303,"/main");
     }
-    res.session = null;
-    res.redirect("/main");
+    req.session = null;
+    res.redirect(303,"/main");
   });
 
 
+/*   userRouter.post("/register", (req, res) => {
+    let
+  })
+ */
   return userRouter;
 };
