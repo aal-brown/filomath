@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, addUser, checkUsername } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -30,7 +30,7 @@ module.exports = function(userRouter, database) {
     if (!userID) {
       res.redirect("/main");
     }
-    res.render("index")
+    res.render("index");
 });
 
   //Check if a user exists with a given username and password
@@ -63,7 +63,8 @@ module.exports = function(userRouter, database) {
       });
   });
 
-  userRouter.put("/logout", (req, res) => {
+
+  userRouter.post("/logout", (req, res) => {
     let userID = req.session.userID;
 
     if (!userID) {
@@ -73,10 +74,28 @@ module.exports = function(userRouter, database) {
     res.redirect(303,"/main");
   });
 
+//I will need to handle whether the username is already taken or not or if that email is already being used
+  userRouter.post("/register", (req, res) => {
+    const userInfo = req.body;
+    console.log(userInfo.username)
+    let exists = checkUsername(userInfo.username, database);
+    console.log(exists)
 
-/*   userRouter.post("/register", (req, res) => {
-    let
-  })
- */
+    if (exists) {
+      res.send("Error, username taken");
+    }
+    userInfo.password = bcrypt.hashSync(userInfo.password, 12);
+    addUser(userInfo, database)
+      .then((user) => {
+        if (!user) {
+          res.redirect("/main)");
+          return;
+        }
+        req.session.userId = user.id;
+        res.redirect("/user/");
+      })
+      .catch((err) => res.send(err));
+  });
+
   return userRouter;
 };

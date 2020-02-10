@@ -1,5 +1,5 @@
 
-
+//Function to retrieve a user based on their email
 const getUserWithEmail = function(email,db) {
   return db.query(`
   SELECT *
@@ -10,17 +10,34 @@ const getUserWithEmail = function(email,db) {
     });
 };
 
+//Function to add a user to the database
 const addUser = function(userInfo, db) {
+  console.log("Im inside addUser")
   const values = [userInfo.name, userInfo.username, userInfo.email, userInfo.password];
+  console.log("values",values);
   return db.query(`
   INSERT INTO users (name, username, email, password)
-  VALUES ($1, $2, $3)
+  VALUES ($1, $2, $3, $4)
   returning *;
   `,values)
     .then((res) => res.rows[0]);
 };
 
+const checkUsername = function(userName, db) {
+  db.query(`
+  SELECT username
+  FROM users
+  WHERE username = $1
+  `,[userName])
+    .then(() => {
+      console.log("inside the .then function of checkUsername");
+      return true})
+    .catch(() => {return false});
+};
+
 module.exports = {
-  getUserWithEmail
+  getUserWithEmail,
+  addUser,
+  checkUsername
 };
 
