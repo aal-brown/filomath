@@ -38,8 +38,23 @@ app.use("/styles", sass({
   debug: true,
   outputStyle: 'expanded'
 }));
-app.use(express.static("public"));
+app.use("/public", express.static("public"));
 
+
+
+
+// /users/endpoints
+const usersRoutes = require("./routes/users");
+const userRouter  = express.Router();
+usersRoutes(userRouter, db);
+
+app.use("/user/",userRouter);
+
+
+
+const widgetsRoutes = require("./routes/widgets");
+app.use("/api/widgets", widgetsRoutes(db));
+// Note: mount other resources here, using the same pattern above
 
 // /api/endpoints
 /* const apiRouter = express.Router();
@@ -48,20 +63,6 @@ app.use('/api', apiRouter); */
 app.get("/main", (req, res) => {
   res.render("main_no_cookies");
 });
-
-// /users/endpoints
-const usersRoutes = require("./routes/users");
-const userRouter  = express.Router();
-usersRoutes(userRouter, db);
-
-app.use("/",userRouter);
-
-
-
-const widgetsRoutes = require("./routes/widgets");
-app.use("/api/widgets", widgetsRoutes(db));
-// Note: mount other resources here, using the same pattern above
-
 
 // Home page
 // Warning: avoid creating more routes in this file!

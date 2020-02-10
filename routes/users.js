@@ -25,13 +25,13 @@ module.exports = function(userRouter, database) {
           .json({ error: err.message });
       }); */
 
-      let userID = req.session.userID;
+    let userID = req.session.userID;
 
-      if (!userID) {
-        res.redirect("/main");
-      }
-      res.render("index")
-  });
+    if (!userID) {
+      res.redirect("/main");
+    }
+    res.render("index")
+});
 
   //Check if a user exists with a given username and password
 
@@ -68,6 +68,18 @@ module.exports = function(userRouter, database) {
        console.log("Halp! I'm inside catch!")
         res.send(err)
       });
+  });
+
+  userRouter.put("/", (req, res) => {
+    console.log("inside the put router for the logout")
+    let userID = req.session.userID;
+
+    if (!userID) {
+      console.log("Am I in the fail handler?")
+      res.redirect("/main");
+    }
+    res.session = null;
+    res.redirect("/main");
   });
 
 
