@@ -5,6 +5,7 @@ require('dotenv').config();
 const PORT       = process.env.PORT || 8080;
 const ENV        = process.env.ENV || "development";
 const express    = require("express");
+const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");
 const sass       = require("node-sass-middleware");
 const app        = express();
@@ -16,6 +17,11 @@ const dbParams = require('./lib/db.js');
 const db = new Pool(dbParams);
 db.connect();
 
+//This is "blind" to anything in this file, it only "sees" what is inside its own file.
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1']
+}));
 
 
 
@@ -32,8 +38,23 @@ app.use("/styles", sass({
   debug: true,
   outputStyle: 'expanded'
 }));
-app.use(express.static("public"));
+app.use("/public", express.static("public"));
 
+
+
+
+// /users/endpoints
+const usersRoutes = require("./routes/users");
+const userRouter  = express.Router();
+usersRoutes(userRouter, db);
+
+app.use("/user/",userRouter);
+
+
+
+const widgetsRoutes = require("./routes/widgets");
+app.use("/api/widgets", widgetsRoutes(db));
+// Note: mount other resources here, using the same pattern above
 
 // /api/endpoints
 /* const apiRouter = express.Router();
@@ -43,24 +64,12 @@ app.get("/main", (req, res) => {
   res.render("main_no_cookies");
 });
 
-// /users/endpoints
-const usersRoutes = require("./routes/users");
-const userRouter  = express.Router();
-app.use("/api/users", usersRoutes(userRouter, db));
-
-
-
-const widgetsRoutes = require("./routes/widgets");
-app.use("/api/widgets", widgetsRoutes(db));
-// Note: mount other resources here, using the same pattern above
-
-
 // Home page
 // Warning: avoid creating more routes in this file!
 // Separate them into separate routes files (see above).
-app.get("/", (req, res) => {
+/* app.get("/", (req, res) => {
   res.render("index");
-});
+}); */
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
