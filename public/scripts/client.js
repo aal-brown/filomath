@@ -1,6 +1,14 @@
-
 $(document).ready(() => {
 
+<<<<<<< HEAD
+=======
+
+  /* const { timeElapsed } = require("./helpers"); */
+
+
+
+
+>>>>>>> feature/search
 /* $("#logout").on("click", function(event) {
     event.preventDefault();
 
@@ -20,15 +28,23 @@ $(document).ready(() => {
     return div.innerHTML;
   };
 
-/* resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, likes,global_rating, user_rating
-   */
+  /*resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, likes,global_rating, user_rating
+  */
+
+
   //Function to create the html for the resource object
   const createResourceElement = function(resObj) {
+
+    let rDate = new Date(resObj.date);
+    let msDate = rDate.getTime();
+
+    let timeStr = timeElapsed(msDate);
 
     let resTemplate = `
       <article class="resource-container">
       <header>
         <span id="title">${escape(resObj.title)}</span>
+        <span id="date">${escape(timeStr)}</span>
         <span id="title">Category: ${escape(resObj.category)}</span>
       </header>
       <span id="body">
@@ -77,7 +93,6 @@ $(document).ready(() => {
     loadResources();
   });
 
-<<<<<<< HEAD
 
   $("#search-form").on("submit", function(event) {
     event.preventDefault();
@@ -100,7 +115,6 @@ $(document).ready(() => {
 
 
 
-=======
   const formTemplate = `
       <form class="new-resource" action="/user/resource" method="POST">
         <h3>Create New Resource</h3>
@@ -133,7 +147,6 @@ $(document).ready(() => {
     event.preventDefault();
     resContainer.prepend(formTemplate);
   });
->>>>>>> 16858175cd04e87437be06bc1dd05e4a01684e45
 
 });
 

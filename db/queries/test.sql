@@ -45,11 +45,11 @@ GROUP BY resources.id; */
 
 /* get rating and avg rating, by userID for all users resources */
 
-SELECT resources.id, avg(t.rating) as avg_rating, (SELECT ratings.rating from ratings where ratings.user_id = 2 and ratings.resource_id = resources.id) as rating
+/* SELECT resources.id, avg(t.rating) as avg_rating, (SELECT ratings.rating from ratings where ratings.user_id = 2 and ratings.resource_id = resources.id) as rating
 FROM resources
 JOIN ratings as t on resources.id = t.resource_ID
 WHERE resources.user_id = 2
-GROUP BY resources.id;
+GROUP BY resources.id; */
 
 /* Get category for all user resources */
 
@@ -59,3 +59,11 @@ JOIN resource_categories ON resources.id = resource_categories.resource_id
 JOIN categories ON resource_categories.category_id = categories.id
 WHERE resources.user_id = 1; */
 
+/* This is to test out the search function */
+SELECT resources.id, resources.user_id, (SELECT users.username from users where users.id = resources.user_id group by resources.id) as username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id) as user_rating
+  FROM resources
+  JOIN users as w ON resources.user_id = users.id
+  JOIN ratings AS t ON resources.id = t.resource_id
+  JOIN likes ON resources.id = likes.resource_id
+  WHERE resources.title LIKE '%wiki%' OR resources.title LIKE 'wiki%' OR resources.title LIKE '%wiki' OR resources.title LIKE 'wiki'
+  GROUP BY resources.id;
