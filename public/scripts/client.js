@@ -32,13 +32,13 @@ $(document).ready(() => {
   const createResourceElement = function(resObj) {
 
     let resTemplate = `
-      <article class>
+      <article class="resource-container">
       <header>
         <span id="title">${escape(resObj.title)}</span>
-        <span id="title">${escape(resObj.category)}</span>
+        <span id="title">Category: ${escape(resObj.category)}</span>
       </header>
       <span id="body">
-        <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}>
+        <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}">
         <span id="description">${escape(resObj.description)}</span>
       </span>
       <footer>
