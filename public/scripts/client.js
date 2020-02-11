@@ -1,14 +1,8 @@
 $(document).ready(() => {
 
-<<<<<<< HEAD
-=======
 
   /* const { timeElapsed } = require("./helpers"); */
 
-
-
-
->>>>>>> feature/search
 /* $("#logout").on("click", function(event) {
     event.preventDefault();
 
@@ -93,7 +87,6 @@ $(document).ready(() => {
     loadResources();
   });
 
-
   $("#search-form").on("submit", function(event) {
     event.preventDefault();
 
@@ -111,8 +104,7 @@ $(document).ready(() => {
       console.log(res)
     })
 
-});
-
+  });
 
 
   const formTemplate = `
@@ -149,4 +141,3 @@ $(document).ready(() => {
   });
 
 });
-

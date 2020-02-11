@@ -26,8 +26,8 @@ const getUserResources = function(userID,db) {
   return db.query(`
   SELECT resources.id, resources.user_id, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.user_id = $1 and ratings.resource_id = resources.id) as user_rating
   FROM resources
-  JOIN ratings AS t ON resources.id = t.resource_id
-  JOIN likes ON resources.id = likes.resource_id
+  LEFT JOIN ratings AS t ON resources.id = t.resource_id
+  LEFT JOIN likes ON resources.id = likes.resource_id
   WHERE resources.user_id = $1
   GROUP BY resources.id;
   `,[userID])
