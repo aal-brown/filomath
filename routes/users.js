@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, addUser, checkUsername, getUserResources } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, addUser, checkUsername, getUserResources, createResource } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -124,10 +124,17 @@ module.exports = function(userRouter, database) {
       .catch((err) => err);
   });
 
-  userRouter.post("/resource", (req, res) => {
-    const resourceInfo = req.body;
+  userRouter.post("/resource", async (req, res) => {
+    let resourceInfo = req.body;
+    resourceInfo.category = await getCategoryFromId(resourceInfo.category, database);
     console.log(resourceInfo)
-    res.redirect("/main")
+    let userID = req.session.userID;
+    createResource(resourceInfo, database, userID)
+    .then(() => {
+      console.log("wher am i");
+      res.redirect("/user/")
+    })
+    .catch((err) => res.send(err.message));
   });
 
   return userRouter;

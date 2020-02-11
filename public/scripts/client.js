@@ -1,12 +1,6 @@
 
 $(document).ready(() => {
 
-
-
-
-
-
-
 /* $("#logout").on("click", function(event) {
     event.preventDefault();
 
@@ -83,6 +77,7 @@ $(document).ready(() => {
     loadResources();
   });
 
+<<<<<<< HEAD
 
   $("#search-form").on("submit", function(event) {
     event.preventDefault();
@@ -105,6 +100,40 @@ $(document).ready(() => {
 
 
 
+=======
+  const formTemplate = `
+      <form class="new-resource" action="/user/resource" method="POST">
+        <h3>Create New Resource</h3>
+        <div class="fields">
+        <label for="title">Title: </label><input type="text" id="title" name="title">
+        </div>
+        <div class="fields">
+        <label for="url">URL: </label><input type="url" id="url" name="url">
+        </div>
+        <div class="fields">
+        <label for="category">Category: </label><input type="text" id="category" name="category">
+        </div>
+        <div class="fields">
+        <label for="description">Description: </label><input type="text" id="description" name="description">
+        </div>
+        <div class="fields">
+        <label for="thumbnail_url">Thumbnail URL: </label><input type="url" id="thumbnail_url" name="thumbnail_url">
+        </div>
+        <div class="fields">
+        <label for="rating">My Rating: </label><input type="number" id="rating" name="rating">
+        </div>
+        <div id="submit-cancel-buttons">
+          <input type="submit" value="Cancel">
+          <input type="submit" value="Submit">
+        </div>
+      </form>
+    `;
+
+  $("#newresource").on("click", function(event) {
+    event.preventDefault();
+    resContainer.prepend(formTemplate);
+  });
+>>>>>>> 16858175cd04e87437be06bc1dd05e4a01684e45
 
 });
 

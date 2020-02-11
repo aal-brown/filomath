@@ -10,6 +10,16 @@ const getUserWithEmail = function(email,db) {
     });
 };
 
+const getCategoryFromId = function(category, db) {
+  return db.query(`
+  SELECT id FROM categories
+  WHERE category = $1
+  `,[category])
+    .then((res) => {
+      return res.rows[0].id
+    });
+};
+
 //Function to retrive all resources. It will take in 4 parameters, the userId, the database the 'where' parameter and then a sort by parameter.""
 const getUserResources = function(userID,db) {
   let resObject;
@@ -97,34 +107,39 @@ const checkUsername = function(userName, db) {
 };
 
 //adds a new resource to the database
-const createResource = function(resourceInfo, db) {
-  const values = [resourceInfo.user_id, resourceInfo.title, resourceInfo.description, resourceInfo.resource_url, resourceInfo.thumbnail_url, resourceInfo.date];
+const createResource = function(resourceInfo, db, userID) {
+  let date = new Date().toISOString();
+  let categoryID = resourceInfo.category;
+  const values = [userID, resourceInfo.title, resourceInfo.description, resourceInfo.url, resourceInfo.thumbnail_url, date];
   let resource;
   //insert the new resource
   return db.query(`
   INSERT INTO resources (user_id, title, description, resource_url, thumbnail_url, date)
   VALUES ($1, $2, $3, $4, $5, $6)
-  returning *
+  RETURNING *;
   `, values)
-
-    .then((res) => {
-      resource = res.rows[0]; //grab the resource and make into a new object
-      const categoryValues = [resource.id, resourceInfo.categoryID];
-      //use resource object to insert new resource category
-      return db.query(`
-    INSERT INTO resource_categories (resource_id, category_id)
-    VALUES ($1, $2)
-    `, categoryValues);
-    })
-    //return resource object with name of category appended
-    .then(() => {
-      resource.category = resourceInfo.categoryName;
-      return resource;
-    });
+  .then((res) => {
+    console.log("FIRST THEN");
+    console.log(categoryID)
+    resource = res.rows[0]; //grab the resource and make into a new object
+    const categoryValues = [resource.id, categoryID];
+    //use resource object to insert new resource category
+    return db.query(`
+  INSERT INTO resource_categories (resource_id, category_id)
+  VALUES ($1, $2)
+  `, categoryValues);
+  })
+  //return resource object with name of category appended
+  .then(() => {
+    console.log("SECOND THEN");
+    resource.category = resourceInfo.categoryName;
+    return resource;
+  });
 };
 
 module.exports = {
   getUserWithEmail,
+  getCategoryFromId,
   addUser,
   checkUsername,
   getUserResources,
