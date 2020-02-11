@@ -116,5 +116,11 @@ module.exports = function(userRouter, database) {
       .catch((err) => err);
   });
 
+  userRouter.post("/resource", (req, res) => {
+    const resourceInfo = req.body;
+    console.log(resourceInfo)
+    res.redirect("/main")
+  });
+
   return userRouter;
 };

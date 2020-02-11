@@ -44,7 +44,7 @@ const getUserResources = function(userID,db) {
 
 //Function to add a user to the database
 const addUser = function(userInfo, db) {
-  console.log("Im inside addUser")
+  console.log("Im inside addUser");
   const values = [userInfo.name, userInfo.username, userInfo.email, userInfo.password];
   console.log("values",values);
   return db.query(`
@@ -66,10 +66,38 @@ const checkUsername = function(userName, db) {
     });
 };
 
+//adds a new resource to the database
+const createResource = function(resourceInfo, db) {
+  const values = [resourceInfo.user_id, resourceInfo.title, resourceInfo.description, resourceInfo.resource_url, resourceInfo.thumbnail_url, resourceInfo.date];
+  let resource;
+  //insert the new resource
+  return db.query(`
+  INSERT INTO resources (user_id, title, description, resource_url, thumbnail_url, date)
+  VALUES ($1, $2, $3, $4, $5, $6)
+  returning *
+  `, values)
+
+    .then((res) => {
+      resource = res.rows[0]; //grab the resource and make into a new object
+      const categoryValues = [resource.id, resourceInfo.categoryID];
+      //use resource object to insert new resource category
+      return db.query(`
+    INSERT INTO resource_categories (resource_id, category_id)
+    VALUES ($1, $2)
+    `, categoryValues);
+    })
+    //return resource object with name of category appended
+    .then(() => {
+      resource.category = resourceInfo.categoryName;
+      return resource;
+    });
+};
+
 module.exports = {
   getUserWithEmail,
   addUser,
   checkUsername,
-  getUserResources
+  getUserResources,
+  createResource
 };
 
