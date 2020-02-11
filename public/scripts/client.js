@@ -89,7 +89,7 @@ $(document).ready(() => {
         <label for="description">Description: </label><input type="text" id="description" name="description">
         </div>
         <div class="fields">
-        <label for="thumbnail-url">Thumbnail URL: </label><input type="url" id="thumbnail-url" name="thumbnail-url">
+        <label for="thumbnail_url">Thumbnail URL: </label><input type="url" id="thumbnail_url" name="thumbnail_url">
         </div>
         <div class="fields">
         <label for="rating">My Rating: </label><input type="number" id="rating" name="rating">
