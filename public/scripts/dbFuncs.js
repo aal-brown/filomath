@@ -47,6 +47,9 @@ const getUserResources = function(userID,db) {
         each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
         i++;
       }
+      resObject.sort((a,b) => {
+        return b.date - a.date;
+      });
       return resObject;
     });
 };

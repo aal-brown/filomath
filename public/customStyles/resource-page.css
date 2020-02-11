@@ -1,0 +1,55 @@
+.resource-page {
+  display: flex;
+  flex-direction: column;
+  width: -webkit-fill-available;
+  margin-left: 10%;
+  margin-right: 10%;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  padding: 0.5em;
+  margin-top: 1em;
+}
+
+.resource-page header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: larger;
+}
+
+.resource-info {
+  display: flex;
+  flex-direction: row;
+}
+
+#res-img {
+  width: 6em;
+}
+
+#desc-box {
+  display: flex;
+  flex-direction: column;
+  width: -webkit-fill-available;
+  margin: 0.5em;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  padding: 0.5em;
+}
+
+#foot {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.res-ratings{
+  display: flex;
+  flex-direction: column;
+}
+
+#comment-section {
+  display: flex;
+  flex-direction: row;
+}
