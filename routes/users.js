@@ -23,7 +23,7 @@ module.exports = function(userRouter, database) {
     res.render("index");
   });
 
-
+//This handler is used for user requests for their own resources
   userRouter.get("/uresources", (req, res) => {
     let userID = req.session.userID;
     return getUserResources(userID,database)
@@ -32,12 +32,13 @@ module.exports = function(userRouter, database) {
       });
   });
 
-  userRouter.get("/search", (req, res) => {
-    /* let userID = req.session.userID; */
-    let searchParam = req.body
-    return getSearchResources(searchParam,database)
-      .then((userResources) => {
-        res.send(userResources);
+//This handler is for search requests.
+  userRouter.post("/search", (req, res) => {
+    let userID = req.session.userID;
+    let searchParam = req.body;
+    return getSearchResources(userID,searchParam,database)
+      .then((searchResults) => {
+        res.send(searchResults);
       });
   });
 
