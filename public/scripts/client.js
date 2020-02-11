@@ -1,8 +1,7 @@
-
 $(document).ready(() => {
 
 
-
+  /* const { timeElapsed } = require("./helpers"); */
 
 
 
@@ -26,15 +25,23 @@ $(document).ready(() => {
     return div.innerHTML;
   };
 
-/* resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, likes,global_rating, user_rating
-   */
+  /*resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, likes,global_rating, user_rating
+  */
+
+
   //Function to create the html for the resource object
   const createResourceElement = function(resObj) {
+
+    let rDate = new Date(resObj.date);
+    let msDate = rDate.getTime();
+
+    let timeStr = timeElapsed(msDate);
 
     let resTemplate = `
       <article class="resource-container">
       <header>
         <span id="title">${escape(resObj.title)}</span>
+        <span id="date">${escape(timeStr)}</span>
         <span id="title">Category: ${escape(resObj.category)}</span>
       </header>
       <span id="body">
