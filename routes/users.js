@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, addUser, checkUsername, getUserResources } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, addUser, checkUsername, getUserResources, createResource } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -29,7 +29,6 @@ module.exports = function(userRouter, database) {
     console.log("In the uresources route");
     return getUserResources(userID,database)
       .then((userResources) => {
-        console.log(userResources);
         res.send(userResources);
       });
   });
