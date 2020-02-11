@@ -19,14 +19,50 @@ $(document).ready(() => {
 
   }); */
 
+  //Escape function to protect against script injection
+  const escape =  function(str) {
+    let div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  };
+
+/* resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, likes,global_rating, user_rating
+   */
+  //Function to create the html for the resource object
+  const createResourceElement = function(resObj) {
+
+    let resTemplate = `
+      <article class>
+      <header>
+        <span id="title">${escape(resObj.title)}</span>
+        <span id="title">${escape(resObj.category)}</span>
+      </header>
+      <span id="body">
+        <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}>
+        <span id="description">${escape(resObj.description)}</span>
+      </span>
+      <footer>
+          <span id="likes">Likes: ${escape(resObj.likes)}</span>
+          <span class="ratings">
+            <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
+            <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
+          </span>
+        </footer>
+    </article>
+  `;
+    return resTemplate;
+  };
+
+
+
 
 
   //Function that initiates the creation of the html for each resource and then prepends it to the page html.
-  let tweetsContainer = $("#tweets-container");
-  const renderTweets = function(tweetsObjArr) {
-    tweetsContainer.empty();
-    tweetsObjArr.forEach((value) => {
-      $("#tweets-container").append(createTweetElement(value));
+  let resContainer = $("#resources-container");
+  const renderResources = function(resObjArr) {
+    resContainer.empty();
+    resObjArr.forEach((value) => {
+      resContainer.append(createResourceElement(value));
     });
   };
 
@@ -34,12 +70,18 @@ $(document).ready(() => {
   //This function is used within the create resource function to get the resources and display them on the page.
   const loadResources = function() {
     $.ajax({
-      url: "/uresources",
-      method: "GET",
+      url: "/user/uresources",
+      method: "GET"
     }).then(function(resourceData) {
-      renderTweets(resourceData);
+      console.log(resourceData);
+      renderResources(resourceData);
     });
   };
+
+  $("#myresources").on("click", function(event) {
+    event.preventDefault();
+    loadResources();
+  });
 
 
 

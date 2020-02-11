@@ -26,11 +26,12 @@ module.exports = function(userRouter, database) {
 
   userRouter.get("/uresources", (req, res) => {
     let userID = req.session.userID;
-    if (!userID) {
-      return res.redirect("/main");
-    }
+    console.log("In the uresources route");
     return getUserResources(userID,database)
-      .then((userResources) => userResources);
+      .then((userResources) => {
+        console.log(userResources);
+        res.send(userResources);
+      });
   });
 
   //Check if a user exists with a given username and password
@@ -59,17 +60,17 @@ module.exports = function(userRouter, database) {
         res.redirect("/user/");
       })
       .catch((err) => {
-        res.send(err)
+        res.send(err);
       });
   });
 
-  userRouter.post("/loadResources", (req, res) => {
+/*   userRouter.post("/loadresources", (req, res) => {
     let userID = req.session.userID;
 
-    getUserResources(userID, db).then((res) => {
-      console.log(res);
+    getUserResources(userID, database).then((data) => {
+      res.send(data);
     });
-  });
+  }); */
 
 
 
