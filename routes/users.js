@@ -26,13 +26,21 @@ module.exports = function(userRouter, database) {
 
   userRouter.get("/uresources", (req, res) => {
     let userID = req.session.userID;
-    console.log("In the uresources route");
     return getUserResources(userID,database)
       .then((userResources) => {
-        console.log(userResources);
         res.send(userResources);
       });
   });
+
+  userRouter.get("/search", (req, res) => {
+    /* let userID = req.session.userID; */
+    let searchParam = req.body
+    return getSearchResources(searchParam,database)
+      .then((userResources) => {
+        res.send(userResources);
+      });
+  });
+
 
   //Check if a user exists with a given username and password
 
@@ -89,7 +97,7 @@ module.exports = function(userRouter, database) {
 
   userRouter.post("/register", (req, res) => {
     const userInfo = req.body;
-    console.log(userInfo.username)
+    console.log(userInfo.username);
 
     checkUsername(userInfo.username, database)
       .then((exists) => {

@@ -36,20 +36,20 @@ ORDER BY resources.title; */
 
 /* Select resource userID, title, resURL, thumbURL, date, number of likes, avg rating, self rating */
 
-SELECT resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, count(likes.resource_id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.user_id = 1 and ratings.resource_id = resources.id) as user_rating
+/* SELECT resources.id, resources.user_id, resources.title, resources.resource_url, resources.thumbnail_url, resources.date, count(likes.resource_id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.user_id = 1 and ratings.resource_id = resources.id) as user_rating
 FROM resources
 JOIN ratings AS t ON resources.id = t.resource_id
 JOIN likes ON resources.id = likes.resource_id
 WHERE resources.user_id = 1
-GROUP BY resources.id;
+GROUP BY resources.id; */
 
 /* get rating and avg rating, by userID for all users resources */
 
-/* SELECT resources.id, avg(t.rating) as avg_rating, (SELECT ratings.rating from ratings where ratings.user_id = 1 and ratings.resource_id = resources.id) as rating
+SELECT resources.id, avg(t.rating) as avg_rating, (SELECT ratings.rating from ratings where ratings.user_id = 2 and ratings.resource_id = resources.id) as rating
 FROM resources
 JOIN ratings as t on resources.id = t.resource_ID
-WHERE resources.user_id = 1
-GROUP BY resources.id; */
+WHERE resources.user_id = 2
+GROUP BY resources.id;
 
 /* Get category for all user resources */
 

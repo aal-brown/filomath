@@ -53,10 +53,6 @@ $(document).ready(() => {
     return resTemplate;
   };
 
-
-
-
-
   //Function that initiates the creation of the html for each resource and then prepends it to the page html.
   let resContainer = $("#resources-container");
   const renderResources = function(resObjArr) {
@@ -73,18 +69,39 @@ $(document).ready(() => {
       url: "/user/uresources",
       method: "GET"
     }).then(function(resourceData) {
-      console.log(resourceData);
       renderResources(resourceData);
     });
   };
 
+  //This function loads the new tweets as soon as the page loads
+  $(window).on("load", loadResources());
+
+
+  //This function will load the users resources when the "My Resources" item is clicked on in the nav-bar
   $("#myresources").on("click", function(event) {
     event.preventDefault();
     loadResources();
   });
 
 
+  $("#search-form").on("submit", function(event) {
+    event.preventDefault();
 
+    let data = $("[name='searchParam']").val();
+
+    if (!data) {
+      window.alert("Searching for nothing? Here you go ___________________.");
+    }
+
+    $.ajax({
+      url: "/user/search",
+      method: "POST",
+      data: data
+    }).then((res) => {
+      console.log(res)
+    })
+
+});
 
 
 
