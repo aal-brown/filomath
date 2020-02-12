@@ -131,6 +131,22 @@ module.exports = function(userRouter, database) {
     }
   });
 
+  //Edit name
+/*   userRouter.post("/profile/editname", (req, res) => {
+    let userID = req.session.userID;
+
+    if (!userID) {
+      res.redirect(303,"/main");
+    } else {
+      return getUserDetails(userID, database)
+        .then((userData) => {
+          res.send(userData);
+        });
+
+    }
+  }); */
+
+
   userRouter.post("/resource", async (req, res) => {
     let resourceInfo = req.body;
     resourceInfo.category = await getCategoryFromId(resourceInfo.category, database);

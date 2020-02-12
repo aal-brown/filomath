@@ -91,30 +91,120 @@ $(document).ready(() => {
     return resTemplate;
   };
 
+   //Function to create the html for the my profile object
+  const makeProfile = function(userData) {
 
-  //Function that initiates the creation of the html for each user resourceresource and then prepends it to the page html.
+    let profileTemplate = `
+
+    <section id="profile-container">
+        <!---------------------------NAME-------------------------->
+        <div class="profile-content">
+          <span id=user-name">Name: ${escape(userData.name)}</span>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            Edit
+          </button>
+          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Enter New Name</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form id="edit-name" class="md-form mb-4">
+                    <i class="fas fa-lock prefix grey-text"></i>
+                    <input name="name" id="orangeForm-pass" class="form-control">
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+        <!---------------------------EMAIL-------------------------->
+        <div class="profile-content">
+          <span id="user-email">EMAIL: ${escape(userData.email)}</span>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            Edit
+          </button>
+          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Enter New Email Address</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form id="edit-name" class="md-form mb-4">
+                    <i class="fas fa-lock prefix grey-text"></i>
+                    <input name="name" id="orangeForm-pass" class="form-control">
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <footer id="user-stats">
+        <span id="resources">
+          Resources Created: ${escape(userData.created_resources)}
+        </span>
+        <span id="resources">
+          Likes: ${escape(userData.my_likes)}
+        </span>
+        <span id="resources">
+          Ratings: ${escape(userData.my_ratings)}
+        </span>
+        <span id="resources">
+          Comments: ${escape(userData.my_comments)}
+        </span>
+      </footer>
+    </section>
+  `;
+    return profileTemplate;
+  };
+
+
+  //Function that initiates the creation of the html for each user resource and then adds it to the page html.
   let resContainer = $("#resources-container");
 
-  const renderResources = function(resObjArr, createFunctionCallback) {
+  const renderResources = function(resObjArr, callback) {
     resContainer.empty();
     resObjArr.forEach((value) => {
-      resContainer.append(createFunctionCallback(value));
+      resContainer.append(callback(value));
     });
   };
 
 
   //This function is used within the create resource function to get the resources and display them on the page.
-  const loadResources = function(createFunctionCallback) {
+  const loadResources = function(callback) {
     $.ajax({
       url: "/user/uresources",
       method: "GET"
     }).then(function(resourceData) {
-      renderResources(resourceData, createFunctionCallback);
+      renderResources(resourceData, callback);
     });
   };
 
   //This function loads the user resources as soon as the page loads from a get request to the main page
 /*   $(window).on("load", loadResources(createResourceElement)); */
+
+
+  //Render the profile template
+  const renderProfile = function(userData, callback) {
+    resContainer.empty();
+    resContainer.append(callback(userData));
+  };
 
 
   //This function will load the users resources when the "My Resources" item is clicked on in the nav-bar
@@ -179,7 +269,7 @@ $(document).ready(() => {
     resContainer.prepend(formTemplate);
   });
 
-  //Hander for when "My Profile" button is clicked.
+  //Handler for when "My Profile" button is clicked.
   $("#myprofile").on("click", function(event) {
     event.preventDefault();
 
@@ -187,13 +277,9 @@ $(document).ready(() => {
       url: "/user/profile",
       method: "GET"
     }).then((userData) => {
-      console.log(userData);
+      renderProfile(userData, makeProfile);
     });
 
   });
-
-
-
-
 
 });
