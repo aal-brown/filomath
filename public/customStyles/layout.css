@@ -14,7 +14,6 @@ main {
   align-items: center;
   justify-content: center;
   margin-top: 5em;
-  /* margin: 2em; */
   width: 100%;
   height: 100%;
 }
@@ -26,4 +25,12 @@ main {
   align-items: center;
   width: 100%;
   height: 100%;
+}
+
+#resource-form {
+  display: none;
+}
+
+#single-resource{
+  display: none;
 }

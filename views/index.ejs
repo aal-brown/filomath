@@ -26,8 +26,14 @@
     <!-- New Resource CSS-->
     <link rel="stylesheet" href="../public/customStyles/new-resource.css" type="text/css" />
 
-      <!-- My Profile CSS-->
-      <link rel="stylesheet" href="../public/customStyles/user-profile.css" type="text/css" />
+    <!-- Individual Resource CSS-->
+    <link rel="stylesheet" href="../public/customStyles/resource-page.css" type="text/css" />
+
+    <!-- Resource Comments CSS-->
+    <link rel="stylesheet" href="../public/customStyles/comments.css" type="text/css" />
+
+    <!-- My Profile CSS-->
+    <link rel="stylesheet" href="../public/customStyles/user-profile.css" type="text/css" />
 
     <!-- External JS -->
     <script type="text/javascript" src="../public/vendor/jquery-3.0.0.js"></script>
@@ -35,8 +41,16 @@
     <title>Filomath</title>
   </head>
   <body>
-    <%- include("./partials/_navbar.ejs") %>
+      <%- include("./partials/_navbar.ejs") %>
     <main>
+      <div id="resource-form">
+        <%- include("./partials/_newResource.ejs") %>
+      </div>
+
+      <section id="single-resource">
+          <!-- Individual resources open here -->
+      </section>
+
       <section id="resources-container">
         <!-- Resources are added here, also profile data -->
       </section>
