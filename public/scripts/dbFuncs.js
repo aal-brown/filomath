@@ -33,7 +33,7 @@ const getCategoryFromId = function(category, db) {
 };
 
 //checks if a user has liked a specific resource, returns true if they have
-const isLiked = function(resID, userID) {
+const isLiked = function(resID, userID, db) {
   return db.query(`
   SELECT * FROM likes
   WHERE resource_id = $1 AND user_id = $2
@@ -66,18 +66,24 @@ const getUserResources = function(userID,db) {
       WHERE resources.user_id = $1;
       `,[userID]);
     })
-    .then((res) => {
-      let i = 0;
-      for (let each of resObject) {
-        each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
-        i++;
-      }
-      //Gives us the newest resources first
-      resObject.sort((a,b) => {
-        return b.date - a.date;
-      });
-      return resObject;
-    });
+      .then((res) => {
+        let i = 0;
+        for (let each of resObject) {
+          each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
+          i++;
+        }
+        //Gives us the newest resources first
+        resObject.sort((a,b) => {
+          return b.date - a.date;
+        })
+      })
+        // .then(() => {
+        //   for (let row of resObject) {
+        //     each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
+        //     i++;
+        //   }
+        //   return resObject;
+        // });
 };
 
 

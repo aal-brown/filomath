@@ -38,18 +38,19 @@ $(document).ready(() => {
       <header>
         <span id="title">${escape(resObj.title)}</span>
         <span id="date">${escape(timeStr)}</span>
-        <span id="title">Category: ${escape(resObj.category)}</span>
+        <span id="category">Category: ${escape(resObj.category)}</span>
       </header>
       <span id="body">
         <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}">
         <span id="description">${escape(resObj.description)}</span>
       </span>
       <footer>
+          <img id="like-icon" src="">
           <span id="likes">Likes: ${escape(resObj.likes)}</span>
           <a href="${escape(resObj.resource_url)}">Visit Resource</a>
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
-            <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
+            <span id="global-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
           </span>
         </footer>
     </article>
