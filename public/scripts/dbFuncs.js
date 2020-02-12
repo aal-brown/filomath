@@ -119,6 +119,29 @@ const getSearchResources = function(userID, db, searchParams) {
     });
 };
 
+const getResByCat = function(userID, db, categoryID) {
+  console.log("getResByCat")
+  let resObject;
+  return db.query(`
+  SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = $1 group by resources.id, ratings.rating) as user_rating, categories.category
+  FROM resources
+  JOIN users ON resources.user_id = users.id
+  LEFT JOIN ratings AS t ON resources.id = t.resource_id
+  LEFT JOIN likes ON resources.id = likes.resource_id
+  LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
+  LEFT JOIN categories ON resource_categories.category_id = categories.id
+  WHERE categories.id = $2
+  GROUP BY resources.id, users.id, categories.category;
+  `,[userID,categoryID])
+    .then((res) => {
+      resObject = res.rows;
+      resObject.sort((a,b) => {
+        return b.date - a.date;
+      });
+      return resObject;
+    });
+};
+
 const getUserDetails = function(userID, db) {
 
   return db.query(`
@@ -160,6 +183,42 @@ const checkUsername = function(userName, db) {
     });
 };
 
+
+const changeName = function(userID, newName, db) {
+
+  return db.query(`
+  UPDATE users
+  SET name = $2
+  WHERE users.id = $1;
+  `,[userID,newName])
+    .then();
+
+};
+
+const changeEmail = function(userID, newEmail, db) {
+  console.log(newEmail)
+  return db.query(`
+  UPDATE users
+  SET email = $2
+  WHERE users.id = $1;
+  `,[userID,newEmail])
+    .then();
+
+};
+
+
+const getCategories = function(db) {
+
+  return db.query(`
+  SELECT DISTINCT id, category
+  FROM categories
+  ORDER BY category;
+  `)
+    .then((res) => {
+      return res.rows;
+    });
+};
+
 //adds a new resource to the database
 const createResource = function(resourceInfo, db, userID) {
   let date = new Date().toISOString();
@@ -172,23 +231,23 @@ const createResource = function(resourceInfo, db, userID) {
   VALUES ($1, $2, $3, $4, $5, $6)
   RETURNING *;
   `, values)
-  .then((res) => {
-    resource = res.rows[0]; //grab the resource and make into a new object
-    const categoryValues = [resource.id, categoryID];
-    //use resource object to insert new resource category
-    return db.query(`
-    INSERT INTO resource_categories (resource_id, category_id)
-    VALUES ($1, $2)
-    `, categoryValues);
-  })
-  .then(() => {
-    const ratingValues = [resource.id, userID, resourceInfo.rating];
-    //use resource object to insert rating
-    return db.query(`
-    INSERT INTO ratings (resource_id, user_id, rating)
-    VALUES ($1, $2, $3)
-    `, ratingValues)
-  });
+    .then((res) => {
+      resource = res.rows[0]; //grab the resource and make into a new object
+      const categoryValues = [resource.id, categoryID];
+      //use resource object to insert new resource category
+      return db.query(`
+      INSERT INTO resource_categories (resource_id, category_id)
+      VALUES ($1, $2)
+      `, categoryValues);
+    })
+    .then(() => {
+      const ratingValues = [resource.id, userID, resourceInfo.rating];
+      //use resource object to insert rating
+      return db.query(`
+      INSERT INTO ratings (resource_id, user_id, rating)
+      VALUES ($1, $2, $3)
+      `, ratingValues);
+    });
 };
 
 const getFullResource = function(resID, db) {
@@ -205,22 +264,22 @@ const getFullResource = function(resID, db) {
   WHERE resources.id = $1
   GROUP BY resources.id, users.id, categories.category
   `, [resID])
-  .then((res) => {
-    resObj = res.rows[0]; //create object with resource data
-    //query database for comment data
-    return db.query(`
-    SELECT comments.resource_id, comments.user_id, users.username as comment_author, comments.message, comments.date
-    FROM comments
-    JOIN users ON comments.user_id = users.id
-    WHERE comments.resource_id = $1
-    ORDER BY comments.date DESC;
-    `, [resID])
-  })
-  .then((res) => {
-    //append comment data to resource object and return object
-    resObj.commentData = res.rows;
-    return resObj;
-  })
+    .then((res) => {
+      resObj = res.rows[0]; //create object with resource data
+      //query database for comment data
+      return db.query(`
+      SELECT comments.resource_id, comments.user_id, users.username as comment_author, comments.message, comments.date
+      FROM comments
+      JOIN users ON comments.user_id = users.id
+      WHERE comments.resource_id = $1
+      ORDER BY comments.date DESC;
+      `, [resID]);
+    })
+    .then((res) => {
+      //append comment data to resource object and return object
+      resObj.commentData = res.rows;
+      return resObj;
+    });
 };
 
 const addComment = function(commentData, db) {
@@ -231,9 +290,9 @@ const addComment = function(commentData, db) {
   VALUES ($1, $2, $3, $4)
   RETURNING *;
   `, values)
-  .then((res) => {
-    return res.rows[0];
-  })
+    .then((res) => {
+      return res.rows[0];
+    });
 };
 
 module.exports = {
@@ -245,9 +304,12 @@ module.exports = {
   getUserResources,
   createResource,
   getSearchResources,
+  getUserDetails,
+  changeName,
+  getResByCat,
+  getCategories,
+  changeEmail,
   getFullResource,
   addComment,
-  getUserDetails,
   isLiked
-};
-
+}

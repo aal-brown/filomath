@@ -1,6 +1,7 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getFullResource, addComment, getUserDetails, isLiked } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, isLiked } = require("../public/scripts/dbFuncs");
+
 
 
 /*
@@ -44,6 +45,16 @@ module.exports = function(userRouter, database) {
       });
   });
 
+  //This handler is for search requests from the browse categories bar.
+  userRouter.post("/search/categs", (req, res) => {
+    let userID = req.session.userID;
+    let catSearchParam = req.body.catData;
+
+    return getResByCat(userID, database, catSearchParam)
+      .then((searchResults) => {
+        res.send(searchResults);
+      });
+  });
 
   //Check if a user exists with a given username and password
 
@@ -89,7 +100,6 @@ module.exports = function(userRouter, database) {
   //I will need to handle whether the username is already taken (done) or not or if that email is already being used (not done)
   userRouter.post("/register", (req, res) => {
     const userInfo = req.body;
-    console.log(userInfo.username);
 
     checkUsername(userInfo.username, database)
       .then((exists) => {
@@ -121,7 +131,7 @@ module.exports = function(userRouter, database) {
     let userID = req.session.userID;
 
     if (!userID) {
-      res.redirect(303,"/main");
+      return res.redirect(303,"/main");
     } else {
       return getUserDetails(userID, database)
         .then((userData) => {
@@ -130,10 +140,48 @@ module.exports = function(userRouter, database) {
     }
   });
 
+  //Edit name
+  userRouter.post("/profile/editname", (req, res) => {
+    let userID = req.session.userID;
+    let newName = req.body.name;
+    if (!userID) {
+      return res.redirect(303,"/main");
+    } else {
+      changeName(userID, newName, database)
+        .then(() => {
+          res.sendStatus(200);
+        });
+    }
+  });
+
+  //Edit email
+  userRouter.post("/profile/editemail", (req, res) => {
+    let userID = req.session.userID;
+    let newEmail = req.body.email;
+    if (!userID) {
+      res.redirect(303,"/main");
+    } else {
+      changeEmail(userID, newEmail, database)
+        .then();
+    }
+  });
+
+  //Get categories
+  userRouter.get("/categories", (req, res) => {
+    let userID = req.session.userID;
+    if (!userID) {
+      res.redirect(303,"/main");
+    } else {
+      return getCategories(database)
+        .then((catData) => {
+          res.send(catData);
+        });
+    }
+  });
+
   userRouter.post("/newres", async (req, res) => {
     let resourceInfo = req.body;
     resourceInfo.category = await getCategoryFromId(resourceInfo.category, database);
-    console.log(resourceInfo);
     let userID = req.session.userID;
     createResource(resourceInfo, database, userID)
       .then(() => {
