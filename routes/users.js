@@ -127,14 +127,14 @@ module.exports = function(userRouter, database) {
   userRouter.post("/resource", async (req, res) => {
     let resourceInfo = req.body;
     resourceInfo.category = await getCategoryFromId(resourceInfo.category, database);
-    console.log(resourceInfo)
+    console.log(resourceInfo);
     let userID = req.session.userID;
     createResource(resourceInfo, database, userID)
-    .then(() => {
-      console.log("wher am i");
-      res.redirect("/user/")
-    })
-    .catch((err) => res.send(err.message));
+      .then(() => {
+        console.log("wher am i");
+        res.redirect("/user/");
+      })
+      .catch((err) => res.send(err.message));
   });
 
   return userRouter;
