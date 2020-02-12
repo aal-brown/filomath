@@ -9,3 +9,7 @@ main {
   margin-top: 5em;
   /* margin: 2em; */
 }
+
+#resource-form {
+  display: none;
+}

@@ -185,8 +185,8 @@ $(document).ready(() => {
     });
 
     $("#return").on("click", function(event) {
-      $("#resources-container").show(() => {}); //shows resources
-      $("#single-resource").hide(() => {});
+      $("#resources-container").slideDown(() => {}); //shows resources
+      $("#single-resource").slideUp(() => {});
       container.empty();
     }).children().click(function(event) {
       event.stopPropagation();
@@ -214,8 +214,8 @@ $(document).ready(() => {
         method: "POST",
         data: {ID: $(this).attr('name')}
       }).then( function(resourceData) {
-        $("#single-resource").show("fast", () => {});
-        $("#resources-container").hide(() => {}); //hides all resource containers
+        $("#single-resource").slideDown("slow", () => {});
+        $("#resources-container").slideUp("fast", () => {}); //hides all resource containers
         loadFullResource(resourceData);
       });
     });
@@ -266,37 +266,10 @@ $(document).ready(() => {
 
   });
 
-  const formTemplate = `
-      <form class="new-resource" action="/user/newres" method="POST">
-        <h3>Create New Resource</h3>
-        <div class="fields">
-        <label for="title">Title: </label><input type="text" id="title" name="title">
-        </div>
-        <div class="fields">
-        <label for="url">URL: </label><input type="url" id="url" name="url">
-        </div>
-        <div class="fields">
-        <label for="category">Category: </label><input type="text" id="category" name="category">
-        </div>
-        <div class="fields">
-        <label for="description">Description: </label><input type="text" id="description" name="description">
-        </div>
-        <div class="fields">
-        <label for="thumbnail_url">Thumbnail URL: </label><input type="url" id="thumbnail_url" name="thumbnail_url">
-        </div>
-        <div class="fields">
-        <label for="rating">My Rating: </label><input type="number" id="rating" name="rating">
-        </div>
-        <div id="submit-cancel-buttons">
-          <input type="submit" value="Cancel">
-          <input type="submit" value="Submit">
-        </div>
-      </form>
-    `;
-
+  //this toggles the new resource form to show or hide it
   $("#newresource").on("click", function(event) {
     event.preventDefault();
-    resContainer.prepend(formTemplate);
+    $("#resource-form").slideToggle("fast", () => {});
   });
 
 });
