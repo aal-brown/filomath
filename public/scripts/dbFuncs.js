@@ -32,6 +32,19 @@ const getCategoryFromId = function(category, db) {
     });
 };
 
+//checks if a user has liked a specific resource, returns true if they have
+const isLiked = function(resID, userID) {
+  return db.query(`
+  SELECT * FROM likes
+  WHERE resource_id = $1 AND user_id = $2
+  `,[resID, userID])
+    .then((res) => {
+      let result = res.rows;
+      if(result.length === 0) {return false};
+      return true;
+    })
+}
+
 //Function to retrive all resources. It will take in 4 parameters, the userId, the database the 'where' parameter and then a sort by parameter.""
 const getUserResources = function(userID,db) {
   let resObject;
@@ -228,6 +241,7 @@ module.exports = {
   getSearchResources,
   getFullResource,
   addComment,
-  getUserDetails
+  getUserDetails,
+  isLiked
 };
 

@@ -320,7 +320,7 @@ $(document).ready(() => {
   };
 
   //This function loads the user resources as soon as the page loads from a get request to the main page
-/*   $(window).on("load", loadResources(createResourceElement)); */
+  $(window).on("load", loadResources(createResourceElement));
 
 
   //Render the profile template
@@ -362,6 +362,7 @@ $(document).ready(() => {
   $("#newresource").on("click", function(event) {
     event.preventDefault();
     $("#resource-form").slideToggle("fast", () => {});
+    $("#title").focus();
   });
 
   //Handler for when "My Profile" button is clicked.

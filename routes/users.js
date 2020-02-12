@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getFullResource, addComment, getUserDetails } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getFullResource, addComment, getUserDetails, isLiked } = require("../public/scripts/dbFuncs");
 
 
 /*
