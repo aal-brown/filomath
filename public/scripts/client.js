@@ -36,10 +36,10 @@ $(document).ready(() => {
 
     let resTemplate = `
       <article class="resource-container">
-      <header name >
-        <span id="title">${escape(resObj.title)}</span>
+      <header>
+        <span id="title"><b>${escape(resObj.title)}</b></span>
         <span id="date">${escape(timeStr)}</span>
-        <span id="title">Category: ${escape(resObj.category)}</span>
+        <span id="category"><b>Category:</b> ${escape(resObj.category)}</span>
       </header>
       <span id="body">
         <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}">
@@ -99,15 +99,15 @@ $(document).ready(() => {
     <section id="profile-container">
     <!---------------------------NAME-------------------------->
     <div class="profile-content">
-      <span id=user-name">Name: ${escape(userData.name)}</span>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+      <span id=user-name"><b>Name:</b> ${escape(userData.name)}</span>
+      <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter">
         Edit
       </button>
       <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Enter New Name</h5>
+              <h5 class="modal-title" id="exampleModalLongTitle"><b>Enter New Name</b></h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -128,15 +128,15 @@ $(document).ready(() => {
   </div>
     <!---------------------------EMAIL-------------------------->
     <div class="profile-content">
-      <span id="user-email">EMAIL: ${escape(userData.email)}</span>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter2">
+      <span id="user-email"><b>Email:</b> ${escape(userData.email)}</span>
+      <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModalCenter2">
         Edit
       </button>
       <div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle2">Enter New Email Address</h5>
+              <h5 class="modal-title" id="exampleModalLongTitle2"><b>Enter New Email Address</b></h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -157,16 +157,16 @@ $(document).ready(() => {
     </div>
   <footer id="user-stats">
     <span id="resources">
-      Resources Created: ${escape(userData.created_resources)}
+    <b>Resources Created:</b> ${escape(userData.created_resources)}
     </span>
     <span id="resources">
-      Likes: ${escape(userData.my_likes)}
+    <b>Likes:</b> ${escape(userData.my_likes)}
     </span>
     <span id="resources">
-      Ratings: ${escape(userData.my_ratings)}
+    <b>Ratings:</b> ${escape(userData.my_ratings)}
     </span>
     <span id="resources">
-      Comments: ${escape(userData.my_comments)}
+    <b>Comments:</b> ${escape(userData.my_comments)}
     </span>
   </footer>
   </section>
@@ -256,7 +256,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
   //This code puts an event listener on the BODY that triggers when the "edit-name" form is submitted, throigh bubbling it can catch it. This allows us to deal with the issues that were happening before with
   $("body").on("submit","#edit-name", function(event) {
 
-    event.preventDefault();
+    /* event.preventDefault(); */
 
     let newName = {name: $("[name='newName']").val()};
 
@@ -276,7 +276,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
   //This code puts an event listener on the BODY that triggers when the "edit-name" form is submitted, throigh bubbling it can catch it. This allows us to deal with the issues that were happening before with
   $("body").on("submit","#edit-email", function(event) {
 
-    event.preventDefault();
+    /* event.preventDefault(); */
     let newEmail = {email: $("[name='newEmail']").val()};
 
     if (!newEmail.email) {

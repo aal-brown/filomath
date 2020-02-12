@@ -1,6 +1,7 @@
 .resource-container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   overflow-wrap: break-word;
   width: 90%;
   height: 20em;
