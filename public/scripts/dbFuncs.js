@@ -10,6 +10,18 @@ const getUserWithEmail = function(email,db) {
     });
 };
 
+const getUserWithID = function(ID, db) {
+  return db.query(`
+  SELECT username
+  FROM users
+  WHERE id = $1
+  `, [ID])
+    .then((res) => {
+      console.log("FINNA RETURN GET USER")
+      return res.rows[0];
+    });
+};
+
 const getCategoryFromId = function(category, db) {
   return db.query(`
   SELECT id FROM categories
@@ -196,6 +208,7 @@ const addComment = function(commentData, db) {
 module.exports = {
   getUserWithEmail,
   getCategoryFromId,
+  getUserWithID,
   addUser,
   checkUsername,
   getUserResources,

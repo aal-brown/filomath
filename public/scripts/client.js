@@ -99,9 +99,14 @@ $(document).ready(() => {
     let fullResTemplate = `
     <article class="resource-page">
       <header>
-      <span id="res-author">Created By: ${escape(resObj.author)}</span>
-        <span id="res-title">${escape(resObj.title)}</span>
-        <span id="res-category">${escape(resObj.category)}</span>
+        <div id="top">
+          <input id="return" type="submit" value="Return">
+          <span id="title">${escape(resObj.title)}</span>
+        </div>
+        <div>
+          <span id="res-author">Created By: ${escape(resObj.author)}</span>
+          <span id="res-category">${escape(resObj.category)}</span>
+        </div>
       </header>
       
       <span class="resource-info">
@@ -120,7 +125,7 @@ $(document).ready(() => {
         </span>
       </span>
       <span id="comment-section">
-        <form class="comment-form" action="/user/comment" method="POST">
+        <form class="comment-form">
           <label for="commentSubmission"></label><input type="text" id="commentSubmission" name="commentSubmission" placeholder="Leave a comment">
           <input type="hidden" id="ID" name="ID" value="${escape(resObj.id)}">
           <input type="submit" value="Post">
@@ -164,6 +169,34 @@ $(document).ready(() => {
   const loadFullResource = function(resObj) {
     let container = $("#single-resource");
     container.append(createFullResourceElement(resObj));
+
+    $(".comment-form").on("submit", function(event) {
+      event.preventDefault();
+      let message = $("[name='commentSubmission']").val();
+      let resID = $("[name='ID']").val();
+
+      $.ajax({
+        url: "/user/comment",
+        method: "POST",
+        data: { ID: resID, commentSubmission: message }
+      }).then( function(commentData) {
+        appendNewComment(commentData);
+     });
+    });
+
+    $("#return").on("click", function(event) {
+      $("#resources-container").show(() => {}); //shows resources
+      $("#single-resource").hide(() => {});
+      container.empty();
+    }).children().click(function(event) {
+      event.stopPropagation();
+    });
+  }
+
+  const appendNewComment = function(comment) {
+    console.log(comment);
+    let container = $("#comments");
+    container.prepend(createCommentElement(comment));
   }
 
   //Function that initiates the creation of the html for each user resourceresource and then prepends it to the page html.
@@ -181,11 +214,14 @@ $(document).ready(() => {
         method: "POST",
         data: {ID: $(this).attr('name')}
       }).then( function(resourceData) {
-        console.log(resourceData);
+        $("#single-resource").show("fast", () => {});
+        $("#resources-container").hide(() => {}); //hides all resource containers
         loadFullResource(resourceData);
       });
     });
   };
+
+
 
 
   //This function is used within the create resource function to get the resources and display them on the page.
@@ -229,7 +265,6 @@ $(document).ready(() => {
     });
 
   });
-
 
   const formTemplate = `
       <form class="new-resource" action="/user/newres" method="POST">
