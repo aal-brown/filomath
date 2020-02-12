@@ -1,6 +1,5 @@
 $(document).ready(() => {
 
-
   /* const { timeElapsed } = require("./helpers"); */
 
 /* $("#logout").on("click", function(event) {
@@ -35,7 +34,7 @@ $(document).ready(() => {
     let timeStr = timeElapsed(msDate);
 
     let resTemplate = `
-      <article class="resource-container">
+      <article class="resource-container" name="${escape(resObj.id)}" style="z-index: 1000">
       <header>
         <span id="title">${escape(resObj.title)}</span>
         <span id="date">${escape(timeStr)}</span>
@@ -64,6 +63,11 @@ $(document).ready(() => {
     resObjArr.forEach((value) => {
       resContainer.append(createResourceElement(value));
     });
+
+    $(".resource-container").click(function(event) {
+      event.preventDefault();
+      console.log($(this).attr('name'));
+      });
   };
 
 

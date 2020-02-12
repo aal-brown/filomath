@@ -1,0 +1,1 @@
+SELECT resources.id, resources.user_id, resources.title, resources.description, resources.thumbnail_url, resources.resource_url,
