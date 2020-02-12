@@ -67,7 +67,7 @@ $(document).ready(() => {
 
     let resTemplate = `
       <article class="resource-container">
-      <header name >
+      <header>
         <span id="title">${escape(resObj.title)}</span>
         <span id="date">${escape(timeStr)}</span>
         <span id="date">${escape(resObj.username)}</span>
@@ -90,6 +90,81 @@ $(document).ready(() => {
     return resTemplate;
   };
 
+  const createFullResourceElement = function(resObj) {
+    let rDate = new Date(resObj.date);
+    let msDate = rDate.getTime();
+
+    let timeStr = timeElapsed(msDate);
+
+    let fullResTemplate = `
+    <article class="resource-page">
+      <header>
+      <span id="res-author">Created By: ${escape(resObj.author)}</span>
+        <span id="res-title">${escape(resObj.title)}</span>
+        <span id="res-category">${escape(resObj.category)}</span>
+      </header>
+      
+      <span class="resource-info">
+        <img id="res-img" src="${escape(resObj.thumbnail_url)}">
+        <span id="desc-box">
+          <span id="res-description">${escape(resObj.description)}</span>
+          <span id="res-url">${escape(resObj.resource_url)}</span>
+        </span>
+      </span>
+      <span id="foot">
+        <span id="res-likes">Likes: ${escape(resObj.likes)}</span>
+        <span id="res-likes">Created: ${timeStr}</span>
+        <span class="res-ratings">
+          <span id="my-rating">My Rating: ${escape(resObj.user_rating)}</span>
+          <span id="global-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
+        </span>
+      </span>
+      <span id="comment-section">
+        <form class="comment-form" action="/user/comment" method="POST">
+          <label for="commentSubmission"></label><input type="text" id="commentSubmission" name="commentSubmission" placeholder="Leave a comment">
+          <input type="hidden" id="ID" name="ID" value="${escape(resObj.id)}">
+          <input type="submit" value="Post">
+        </form>
+        <div id="comments">
+    `;
+
+    for(let comment of resObj.commentData) {
+      fullResTemplate += createCommentElement(comment);
+    }
+
+    fullResTemplate += `
+      </div>
+      </span>
+    </article>
+    `;
+
+    return fullResTemplate;
+  };
+
+  const createCommentElement = function(comment) {
+    let date = new Date(comment.date)
+    let msDate = date.getTime();
+    comment.date = timeElapsed(msDate);
+
+    const commentTemplate = `
+    <article class="comment-container">
+    <header>
+      <span id="comment-user">${escape(comment.comment_author)}</span>
+      <span id="comment-date">${escape(comment.date)}</span>
+    </header>
+    <span id="body">
+      <span id="message">${escape(comment.message)}</span>
+    </span>
+    </article>
+    `;
+
+    return commentTemplate;
+  }
+
+  const loadFullResource = function(resObj) {
+    let container = $("#single-resource");
+    container.append(createFullResourceElement(resObj));
+  }
 
   //Function that initiates the creation of the html for each user resourceresource and then prepends it to the page html.
   let resContainer = $("#resources-container");
@@ -101,9 +176,15 @@ $(document).ready(() => {
     });
 
     $(".resource-container").click(function(event) {
-      event.preventDefault();
-      console.log($(this).attr('name'));
+      $.ajax({
+        url: "/user/resource",
+        method: "POST",
+        data: {ID: $(this).attr('name')}
+      }).then( function(resourceData) {
+        console.log(resourceData);
+        loadFullResource(resourceData);
       });
+    });
   };
 
 
@@ -151,7 +232,7 @@ $(document).ready(() => {
 
 
   const formTemplate = `
-      <form class="new-resource" action="/user/resource" method="POST">
+      <form class="new-resource" action="/user/newres" method="POST">
         <h3>Create New Resource</h3>
         <div class="fields">
         <label for="title">Title: </label><input type="text" id="title" name="title">

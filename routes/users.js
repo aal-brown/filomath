@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, addUser, checkUsername, getUserResources, getSearchResources, createResource } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, addUser, checkUsername, getUserResources, getSearchResources, createResource, getFullResource, addComment } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -126,15 +126,36 @@ module.exports = function(userRouter, database) {
       .catch((err) => err);
   });
 
-  userRouter.post("/resource", async (req, res) => {
+  userRouter.post("/newres", async (req, res) => {
     let resourceInfo = req.body;
     resourceInfo.category = await getCategoryFromId(resourceInfo.category, database);
     console.log(resourceInfo);
     let userID = req.session.userID;
     createResource(resourceInfo, database, userID)
       .then(() => {
-        console.log("wher am i");
         res.redirect("/user/");
+      })
+      .catch((err) => res.send(err.message));
+  });
+
+  userRouter.post("/resource", (req, res) => {
+    let resID = req.body.ID;
+    return getFullResource(resID, database)
+      .then((fullResource) => {
+        res.send(fullResource);
+      })
+      .catch((err) => res.send(err.message));
+  });
+
+  userRouter.post("/comment", (req, res) => {
+    let commentData = {
+      resID: req.body.ID,
+      userID: req.session.userID,
+      message: req.body.commentSubmission
+    };
+    return addComment(commentData, database)
+      .then((comment) => {
+        res.send(comment);
       })
       .catch((err) => res.send(err.message));
   });

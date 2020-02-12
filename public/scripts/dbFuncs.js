@@ -125,22 +125,72 @@ const createResource = function(resourceInfo, db, userID) {
   RETURNING *;
   `, values)
   .then((res) => {
-    console.log("FIRST THEN");
-    console.log(categoryID)
     resource = res.rows[0]; //grab the resource and make into a new object
     const categoryValues = [resource.id, categoryID];
     //use resource object to insert new resource category
     return db.query(`
-  INSERT INTO resource_categories (resource_id, category_id)
-  VALUES ($1, $2)
-  `, categoryValues);
+    INSERT INTO resource_categories (resource_id, category_id)
+    VALUES ($1, $2)
+    `, categoryValues);
   })
-  //return resource object with name of category appended
   .then(() => {
-    console.log("SECOND THEN");
-    resource.category = resourceInfo.categoryName;
-    return resource;
+    const ratingValues = [resource.id, userID, resourceInfo.rating];
+    //use resource object to insert rating
+    return db.query(`
+    INSERT INTO ratings (resource_id, user_id, rating)
+    VALUES ($1, $2, $3)
+    `, ratingValues)
   });
+  //return resource object with name of category appended
+  // .then(() => {
+  //   resource.category = resourceInfo.categoryName;
+  //   return resource;
+  // });
+};
+
+const getFullResource = function(resID, db) {
+  let resObj;
+  //query database for all resource data except for comments
+  return db.query(`
+  SELECT resources.id, resources.user_id, users.username as author, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = resources.user_id group by resources.id, ratings.rating) as user_rating, categories.category
+  FROM resources
+  JOIN users ON resources.user_id = users.id
+  LEFT JOIN ratings AS t ON resources.id = t.resource_id
+  LEFT JOIN likes ON resources.id = likes.resource_id
+  LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
+  LEFT JOIN categories ON resource_categories.category_id = categories.id
+  WHERE resources.id = $1
+  GROUP BY resources.id, users.id, categories.category
+  `, [resID])
+  .then((res) => {
+    resObj = res.rows[0]; //create object with resource data
+    //query database for comment data
+    return db.query(`
+    SELECT comments.resource_id, comments.user_id, users.username as comment_author, comments.message, comments.date
+    FROM comments
+    JOIN users ON comments.user_id = users.id
+    WHERE comments.resource_id = $1
+    ORDER BY comments.date DESC;
+    `, [resID])
+  })
+  .then((res) => {
+    //append comment data to resource object and return object
+    resObj.commentData = res.rows;
+    return resObj;
+  })
+};
+
+const addComment = function(commentData, db) {
+  let date = new Date().toISOString();
+  let values = [commentData.resID, commentData.userID, commentData.message, date];
+  return db.query(`
+  INSERT INTO comments (resource_id, user_id, message, date)
+  VALUES ($1, $2, $3, $4)
+  RETURNING *;
+  `, values)
+  .then((res) => {
+    return res.rows[0];
+  })
 };
 
 module.exports = {
@@ -150,6 +200,8 @@ module.exports = {
   checkUsername,
   getUserResources,
   createResource,
-  getSearchResources
+  getSearchResources,
+  getFullResource,
+  addComment
 };
 
