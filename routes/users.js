@@ -1,6 +1,7 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getFullResource, addComment } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getFullResource, addComment, getUserDetails } = require("../public/scripts/dbFuncs");
+
 
 /*
  * All routes for Users are defined here
@@ -74,16 +75,6 @@ module.exports = function(userRouter, database) {
       });
   });
 
-/*   userRouter.post("/loadresources", (req, res) => {
-    let userID = req.session.userID;
-
-    getUserResources(userID, database).then((data) => {
-      res.send(data);
-    });
-  }); */
-
-
-
 
   userRouter.post("/logout", (req, res) => {
     let userID = req.session.userID;
@@ -95,8 +86,7 @@ module.exports = function(userRouter, database) {
     res.redirect(303,"/main");
   });
 
-//I will need to handle whether the username is already taken or not or if that email is already being used
-
+  //I will need to handle whether the username is already taken (done) or not or if that email is already being used (not done)
   userRouter.post("/register", (req, res) => {
     const userInfo = req.body;
     console.log(userInfo.username);
@@ -124,6 +114,20 @@ module.exports = function(userRouter, database) {
         }
       })
       .catch((err) => err);
+  });
+
+  //Get request for the user profile
+  userRouter.get("/profile", (req, res) => {
+    let userID = req.session.userID;
+
+    if (!userID) {
+      res.redirect(303,"/main");
+    } else {
+      return getUserDetails(userID, database)
+        .then((userData) => {
+          res.send(userData);
+        });
+    }
   });
 
   userRouter.post("/newres", async (req, res) => {

@@ -100,6 +100,23 @@ const getSearchResources = function(userID, db, searchParams) {
     });
 };
 
+const getUserDetails = function(userID, db) {
+
+  return db.query(`
+  SELECT users.id, users.name, users.email, users.password, (SELECT count(resources.user_id) as created_resources FROM resources WHERE user_id = $1), (SELECT count(likes.id) AS my_likes FROM likes WHERE user_id = $1), (SELECT count(comments.id) AS my_comments FROM comments WHERE user_id = $1), (SELECT count(ratings.id) AS my_ratings FROM ratings WHERE user_id = $1)
+  FROM users
+  JOIN resources ON users.id = resources.user_id
+  JOIN likes ON users.id = likes.user_id
+  JOIN comments on users.id = comments.user_id
+  JOIN ratings on users.id = ratings.user_id
+  WHERE users.id = $1
+  GROUP BY users.id;
+  `,[userID])
+    .then((res) => {
+      return res.rows[0];
+    });
+};
+
 
 //Function to add a user to the database
 const addUser = function(userInfo, db) {
@@ -153,11 +170,6 @@ const createResource = function(resourceInfo, db, userID) {
     VALUES ($1, $2, $3)
     `, ratingValues)
   });
-  //return resource object with name of category appended
-  // .then(() => {
-  //   resource.category = resourceInfo.categoryName;
-  //   return resource;
-  // });
 };
 
 const getFullResource = function(resID, db) {
@@ -215,6 +227,7 @@ module.exports = {
   createResource,
   getSearchResources,
   getFullResource,
-  addComment
+  addComment,
+  getUserDetails
 };
 
