@@ -104,14 +104,14 @@ WHERE resources.user_id = 1; */
   /* Fetch all relevant user information'
   username, user_id (not displayed), number of liked resources, number of comments, number of created resources (so find the user_id associated with a resource), number of ratings, email address,
    */
-SELECT users.id, users.name, users.email, users.password, (SELECT count(resources.user_id) as created_resources FROM resources WHERE user_id = 4), (SELECT count(likes.id) AS my_likes FROM likes WHERE user_id = 4), (SELECT count(comments.id) AS my_comments FROM comments WHERE user_id = 4), (SELECT count(ratings.id) AS my_ratings FROM ratings WHERE user_id = 4)
+/* SELECT users.id, users.name, users.email, users.password, (SELECT count(resources.user_id) as created_resources FROM resources WHERE user_id = 4), (SELECT count(likes.id) AS my_likes FROM likes WHERE user_id = 4), (SELECT count(comments.id) AS my_comments FROM comments WHERE user_id = 4), (SELECT count(ratings.id) AS my_ratings FROM ratings WHERE user_id = 4)
 FROM users
 JOIN resources ON users.id = resources.user_id
 JOIN likes ON users.id = likes.user_id
 JOIN comments on users.id = comments.user_id
 JOIN ratings on users.id = ratings.user_id
 WHERE users.id = 4
-GROUP BY users.id;
+GROUP BY users.id; */
 
 /* Number of likes per user */
 /* SELECT users.id, users.name, count(likes.id)
@@ -134,3 +134,19 @@ FROM users
 JOIN ratings ON users.id = ratings.user_id
 GROUP BY users.id
 order by users.id; */
+
+/* Update username in table */
+/* UPDATE users
+SET name = 'Tristan Jacobs'
+WHERE users.id = 1; */
+
+/* Searching for everything that has a specified category id */
+SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = 1 group by resources.id, ratings.rating) as user_rating, categories.category
+  FROM resources
+  JOIN users ON resources.user_id = users.id
+  LEFT JOIN ratings AS t ON resources.id = t.resource_id
+  LEFT JOIN likes ON resources.id = likes.resource_id
+  LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
+  LEFT JOIN categories ON resource_categories.category_id = categories.id
+  WHERE categories.id = 1
+  GROUP BY resources.id, users.id, categories.category;

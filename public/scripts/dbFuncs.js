@@ -88,6 +88,29 @@ const getSearchResources = function(userID, db, searchParams) {
     });
 };
 
+const getResByCat = function(userID, db, categoryID) {
+  console.log("getResByCat")
+  let resObject;
+  return db.query(`
+  SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = $1 group by resources.id, ratings.rating) as user_rating, categories.category
+  FROM resources
+  JOIN users ON resources.user_id = users.id
+  LEFT JOIN ratings AS t ON resources.id = t.resource_id
+  LEFT JOIN likes ON resources.id = likes.resource_id
+  LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
+  LEFT JOIN categories ON resource_categories.category_id = categories.id
+  WHERE categories.id = $2
+  GROUP BY resources.id, users.id, categories.category;
+  `,[userID,categoryID])
+    .then((res) => {
+      resObject = res.rows;
+      resObject.sort((a,b) => {
+        return b.date - a.date;
+      });
+      return resObject;
+    });
+};
+
 const getUserDetails = function(userID, db) {
 
   return db.query(`
@@ -126,6 +149,42 @@ const checkUsername = function(userName, db) {
   `,[userName])
     .then((res) => {
       return (res.rows.length > 0 ? true : false);
+    });
+};
+
+
+const changeName = function(userID, newName, db) {
+
+  return db.query(`
+  UPDATE users
+  SET name = $2
+  WHERE users.id = $1;
+  `,[userID,newName])
+    .then();
+
+};
+
+const changeEmail = function(userID, newEmail, db) {
+  console.log(newEmail)
+  return db.query(`
+  UPDATE users
+  SET email = $2
+  WHERE users.id = $1;
+  `,[userID,newEmail])
+    .then();
+
+};
+
+
+const getCategories = function(db) {
+
+  return db.query(`
+  SELECT DISTINCT id, category
+  FROM categories
+  ORDER BY category;
+  `)
+    .then((res) => {
+      return res.rows;
     });
 };
 
@@ -168,6 +227,10 @@ module.exports = {
   getUserResources,
   createResource,
   getSearchResources,
-  getUserDetails
+  getUserDetails,
+  changeName,
+  getResByCat,
+  getCategories,
+  changeEmail
 };
 
