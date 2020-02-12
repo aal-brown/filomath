@@ -132,14 +132,17 @@ $(document).ready(() => {
 
     let data = $("[name='searchParam']").val();
 
+    data = data.toLowerCase();
+
     if (!data) {
-      window.alert("Searching for nothing? Here you go ___________________.");
+      return window.alert("Searching for nothing? Here you go ___________________.");
     }
+    const searchParam = {searchParam: data};
 
     $.ajax({
       url: "/user/search",
       method: "POST",
-      data: data
+      data: searchParam
     }).then((res) => {
       renderResources(res,createSearchedElement);
     });

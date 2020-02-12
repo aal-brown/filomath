@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, addUser, checkUsername, getUserResources } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, addUser, checkUsername, getUserResources, getSearchResources } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -32,11 +32,12 @@ module.exports = function(userRouter, database) {
       });
   });
 
-//This handler is for search requests.
+  //This handler is for search requests.
   userRouter.post("/search", (req, res) => {
     let userID = req.session.userID;
-    let searchParam = req.body;
-    return getSearchResources(userID,searchParam,database)
+    let searchParam = req.body.searchParam;
+
+    return getSearchResources(userID,database,searchParam)
       .then((searchResults) => {
         res.send(searchResults);
       });

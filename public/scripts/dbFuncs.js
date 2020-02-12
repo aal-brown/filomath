@@ -45,9 +45,10 @@ const getUserResources = function(userID,db) {
     });
 };
 
+
+
 //We will want to display everything like getUserResources, but also username
 const getSearchResources = function(userID, db, searchParams) {
-  searchParams = searchParams.toLowerCase();
 
   let resObject;
   return db.query(`
@@ -59,16 +60,15 @@ const getSearchResources = function(userID, db, searchParams) {
   LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
   LEFT JOIN categories ON resource_categories.category_id = categories.id
   WHERE LOWER(resources.title) LIKE '%'||$2||'%'
-  OR resources.title LIKE ''||$2||'%'
-  OR resources.title LIKE '%'||$2||''
-  OR resources.title LIKE ''||$2||''
-  OR users.username LIKE ''||$2||'%'
-  OR users.username LIKE '%'||$2||''
-  OR users.username LIKE ''||$2||''
+  OR LOWER(resources.title) LIKE ''||$2||'%'
+  OR LOWER(resources.title) LIKE '%'||$2||''
+  OR LOWER(resources.title) LIKE ''||$2||''
+  OR LOWER(users.username) LIKE ''||$2||'%'
+  OR LOWER(users.username) LIKE '%'||$2||''
+  OR LOWER(users.username) LIKE ''||$2||''
   GROUP BY resources.id, users.id, categories.category;
   `,[userID,searchParams])
     .then((res) => {
-
       resObject = res.rows;
 
       resObject.sort((a,b) => {
