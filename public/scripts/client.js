@@ -209,14 +209,15 @@ $(document).ready(() => {
     });
 
     $(".resource-container").click(function(event) {
+      
       $.ajax({
         url: "/user/resource",
         method: "POST",
         data: {ID: $(this).attr('name')}
       }).then( function(resourceData) {
-        $("#single-resource").slideDown("slow", () => {});
-        $("#resources-container").slideUp("fast", () => {}); //hides all resource containers
         loadFullResource(resourceData);
+        $("#single-resource").slideDown("slow",() => {});
+        $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
       });
     });
   };

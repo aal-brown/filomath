@@ -13,3 +13,7 @@ main {
 #resource-form {
   display: none;
 }
+
+#single-resource{
+  display: none;
+}
