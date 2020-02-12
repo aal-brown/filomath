@@ -60,10 +60,43 @@ JOIN categories ON resource_categories.category_id = categories.id
 WHERE resources.user_id = 1; */
 
 /* This is to test out the search function */
-SELECT resources.id, resources.user_id, (SELECT users.username from users where users.id = resources.user_id group by resources.id) as username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id) as user_rating
+/* SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = 1) as user_rating
   FROM resources
-  JOIN users as w ON resources.user_id = users.id
-  JOIN ratings AS t ON resources.id = t.resource_id
-  JOIN likes ON resources.id = likes.resource_id
+  JOIN users ON resources.user_id = users.id
+  LEFT JOIN ratings AS t ON resources.id = t.resource_id
+  LEFT JOIN likes ON resources.id = likes.resource_id
+  WHERE LOWER(resources.title) LIKE '%"$1"' OR resources.title LIKE 'the%' OR resources.title LIKE '%'||$1||'' OR resources.title LIKE 'the'
+  GROUP BY resources.id, users.id; */
+
+
+/* Doing some simpler tests */
+/* SELECT resources.id, resources.user_id, (SELECT users.username from resources where resources.user_id = users.id) as username
+  FROM resources
+  JOIN users ON resources.user_id = users.id
   WHERE resources.title LIKE '%wiki%' OR resources.title LIKE 'wiki%' OR resources.title LIKE '%wiki' OR resources.title LIKE 'wiki'
-  GROUP BY resources.id;
+  GROUP BY resources.id, users.id;
+ */
+
+/* More testing */
+/*  SELECT resources.title, users.username
+ FROM resources
+ JOIN users ON resources.user_id = users.id;
+ group by resources.id, users.id; */
+
+
+/* SELECT resources.title, users.username
+  FROM resources
+  JOIN users ON resources.user_id = users.id
+  WHERE resources.title LIKE '%wiki%' OR resources.title LIKE 'wiki%' OR resources.title LIKE '%wiki' OR resources.title LIKE 'wiki'
+  GROUP BY resources.id, users.id; */
+
+/* Attempting to also include the category for each resource, in one query */
+SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = 1 group by resources.id, ratings.rating) as user_rating, categories.category
+  FROM resources
+  JOIN users ON resources.user_id = users.id
+  LEFT JOIN ratings AS t ON resources.id = t.resource_id
+  LEFT JOIN likes ON resources.id = likes.resource_id
+  LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
+  LEFT JOIN categories ON resource_categories.category_id = categories.id
+  WHERE LOWER(resources.title) LIKE '%wiki%' OR resources.title LIKE 'wiki%' OR resources.title LIKE '%wiki' OR resources.title LIKE 'wiki'
+  GROUP BY resources.id, users.id, categories.category;

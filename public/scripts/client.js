@@ -25,7 +25,7 @@ $(document).ready(() => {
   */
 
 
-  //Function to create the html for the resource object
+  //Function to create the html for the "my resources" object
   const createResourceElement = function(resObj) {
 
     let rDate = new Date(resObj.date);
@@ -34,7 +34,7 @@ $(document).ready(() => {
     let timeStr = timeElapsed(msDate);
 
     let resTemplate = `
-      <article class="resource-container" name="${escape(resObj.id)}" style="z-index: 1000">
+      <article class="resource-container" name="${escape(resObj.id)}">
       <header>
         <span id="title">${escape(resObj.title)}</span>
         <span id="date">${escape(timeStr)}</span>
@@ -46,6 +46,7 @@ $(document).ready(() => {
       </span>
       <footer>
           <span id="likes">Likes: ${escape(resObj.likes)}</span>
+          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
             <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
@@ -56,12 +57,47 @@ $(document).ready(() => {
     return resTemplate;
   };
 
-  //Function that initiates the creation of the html for each resource and then prepends it to the page html.
+  //Function to create the html for the searched resources objects
+  const createSearchedElement = function(resObj) {
+
+    let rDate = new Date(resObj.date);
+    let msDate = rDate.getTime();
+
+    let timeStr = timeElapsed(msDate);
+
+    let resTemplate = `
+      <article class="resource-container">
+      <header name >
+        <span id="title">${escape(resObj.title)}</span>
+        <span id="date">${escape(timeStr)}</span>
+        <span id="date">${escape(resObj.username)}</span>
+        <span id="title">Category: ${escape(resObj.category)}</span>
+      </header>
+      <span id="body">
+        <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}">
+        <span id="description">${escape(resObj.description)}</span>
+      </span>
+      <footer>
+          <span id="likes">Likes: ${escape(resObj.likes)}</span>
+          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
+          <span class="ratings">
+            <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
+            <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
+          </span>
+        </footer>
+    </article>
+  `;
+    return resTemplate;
+  };
+
+
+  //Function that initiates the creation of the html for each user resourceresource and then prepends it to the page html.
   let resContainer = $("#resources-container");
-  const renderResources = function(resObjArr) {
+
+  const renderResources = function(resObjArr, createFunctionCallback) {
     resContainer.empty();
     resObjArr.forEach((value) => {
-      resContainer.append(createResourceElement(value));
+      resContainer.append(createFunctionCallback(value));
     });
 
     $(".resource-container").click(function(event) {
@@ -72,23 +108,23 @@ $(document).ready(() => {
 
 
   //This function is used within the create resource function to get the resources and display them on the page.
-  const loadResources = function() {
+  const loadResources = function(createFunctionCallback) {
     $.ajax({
       url: "/user/uresources",
       method: "GET"
     }).then(function(resourceData) {
-      renderResources(resourceData);
+      renderResources(resourceData, createFunctionCallback);
     });
   };
 
-  //This function loads the new tweets as soon as the page loads
-  $(window).on("load", loadResources());
+  //This function loads the user resources as soon as the page loads from a get request to the main page
+  $(window).on("load", loadResources(createResourceElement));
 
 
   //This function will load the users resources when the "My Resources" item is clicked on in the nav-bar
   $("#myresources").on("click", function(event) {
     event.preventDefault();
-    loadResources();
+    loadResources(createResourceElement);
   });
 
   $("#search-form").on("submit", function(event) {
@@ -96,17 +132,20 @@ $(document).ready(() => {
 
     let data = $("[name='searchParam']").val();
 
+    data = data.toLowerCase();
+
     if (!data) {
-      window.alert("Searching for nothing? Here you go ___________________.");
+      return window.alert("Searching for nothing? Here you go ___________________.");
     }
+    const searchParam = {searchParam: data};
 
     $.ajax({
       url: "/user/search",
       method: "POST",
-      data: data
+      data: searchParam
     }).then((res) => {
-      console.log(res)
-    })
+      renderResources(res,createSearchedElement);
+    });
 
   });
 

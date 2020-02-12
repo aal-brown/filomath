@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, addUser, checkUsername, getUserResources, createResource } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, addUser, checkUsername, getUserResources, getSearchResources, createResource } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -23,7 +23,7 @@ module.exports = function(userRouter, database) {
     res.render("index");
   });
 
-
+//This handler is used for user requests for their own resources
   userRouter.get("/uresources", (req, res) => {
     let userID = req.session.userID;
     return getUserResources(userID,database)
@@ -32,12 +32,14 @@ module.exports = function(userRouter, database) {
       });
   });
 
-  userRouter.get("/search", (req, res) => {
-    /* let userID = req.session.userID; */
-    let searchParam = req.body
-    return getSearchResources(searchParam,database)
-      .then((userResources) => {
-        res.send(userResources);
+  //This handler is for search requests.
+  userRouter.post("/search", (req, res) => {
+    let userID = req.session.userID;
+    let searchParam = req.body.searchParam;
+
+    return getSearchResources(userID,database,searchParam)
+      .then((searchResults) => {
+        res.send(searchResults);
       });
   });
 
@@ -127,14 +129,14 @@ module.exports = function(userRouter, database) {
   userRouter.post("/resource", async (req, res) => {
     let resourceInfo = req.body;
     resourceInfo.category = await getCategoryFromId(resourceInfo.category, database);
-    console.log(resourceInfo)
+    console.log(resourceInfo);
     let userID = req.session.userID;
     createResource(resourceInfo, database, userID)
-    .then(() => {
-      console.log("wher am i");
-      res.redirect("/user/")
-    })
-    .catch((err) => res.send(err.message));
+      .then(() => {
+        console.log("wher am i");
+        res.redirect("/user/");
+      })
+      .catch((err) => res.send(err.message));
   });
 
   return userRouter;
