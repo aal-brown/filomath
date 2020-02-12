@@ -256,7 +256,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
   //This code puts an event listener on the BODY that triggers when the "edit-name" form is submitted, throigh bubbling it can catch it. This allows us to deal with the issues that were happening before with
   $("body").on("submit","#edit-name", function(event) {
 
-    /* event.preventDefault(); */
+    event.preventDefault();
 
     let newName = {name: $("[name='newName']").val()};
 
@@ -276,10 +276,9 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
   //This code puts an event listener on the BODY that triggers when the "edit-name" form is submitted, throigh bubbling it can catch it. This allows us to deal with the issues that were happening before with
   $("body").on("submit","#edit-email", function(event) {
 
-    /* event.preventDefault(); */
-    console.log("made it here!")
+    event.preventDefault();
     let newEmail = {email: $("[name='newEmail']").val()};
-    console.log(newEmail)
+
     if (!newEmail.email) {
       return window.alert("ERROR: Input Field Is Empty");
     }
