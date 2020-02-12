@@ -88,6 +88,23 @@ const getSearchResources = function(userID, db, searchParams) {
     });
 };
 
+const getUserDetails = function(userID, db) {
+
+  return db.query(`
+  SELECT users.id, users.name, users.email, users.password, (SELECT count(resources.user_id) as created_resources FROM resources WHERE user_id = $1), (SELECT count(likes.id) AS my_likes FROM likes WHERE user_id = $1), (SELECT count(comments.id) AS my_comments FROM comments WHERE user_id = $1), (SELECT count(ratings.id) AS my_ratings FROM ratings WHERE user_id = $1)
+  FROM users
+  JOIN resources ON users.id = resources.user_id
+  JOIN likes ON users.id = likes.user_id
+  JOIN comments on users.id = comments.user_id
+  JOIN ratings on users.id = ratings.user_id
+  WHERE users.id = $1
+  GROUP BY users.id;
+  `,[userID])
+    .then((res) => {
+      return res.rows[0];
+    });
+};
+
 
 //Function to add a user to the database
 const addUser = function(userInfo, db) {
@@ -124,23 +141,23 @@ const createResource = function(resourceInfo, db, userID) {
   VALUES ($1, $2, $3, $4, $5, $6)
   RETURNING *;
   `, values)
-  .then((res) => {
-    console.log("FIRST THEN");
-    console.log(categoryID)
-    resource = res.rows[0]; //grab the resource and make into a new object
-    const categoryValues = [resource.id, categoryID];
-    //use resource object to insert new resource category
-    return db.query(`
-  INSERT INTO resource_categories (resource_id, category_id)
-  VALUES ($1, $2)
-  `, categoryValues);
-  })
-  //return resource object with name of category appended
-  .then(() => {
-    console.log("SECOND THEN");
-    resource.category = resourceInfo.categoryName;
-    return resource;
-  });
+    .then((res) => {
+      console.log("FIRST THEN");
+      console.log(categoryID)
+      resource = res.rows[0]; //grab the resource and make into a new object
+      const categoryValues = [resource.id, categoryID];
+      //use resource object to insert new resource category
+      return db.query(`
+    INSERT INTO resource_categories (resource_id, category_id)
+    VALUES ($1, $2)
+    `, categoryValues);
+    })
+    //return resource object with name of category appended
+    .then(() => {
+      console.log("SECOND THEN");
+      resource.category = resourceInfo.categoryName;
+      return resource;
+    });
 };
 
 module.exports = {
@@ -150,6 +167,7 @@ module.exports = {
   checkUsername,
   getUserResources,
   createResource,
-  getSearchResources
+  getSearchResources,
+  getUserDetails
 };
 

@@ -114,7 +114,7 @@ $(document).ready(() => {
   };
 
   //This function loads the user resources as soon as the page loads from a get request to the main page
-  $(window).on("load", loadResources(createResourceElement));
+/*   $(window).on("load", loadResources(createResourceElement)); */
 
 
   //This function will load the users resources when the "My Resources" item is clicked on in the nav-bar
@@ -178,5 +178,22 @@ $(document).ready(() => {
     event.preventDefault();
     resContainer.prepend(formTemplate);
   });
+
+  //Hander for when "My Profile" button is clicked.
+  $("#myprofile").on("click", function(event) {
+    event.preventDefault();
+
+    $.ajax({
+      url: "/user/profile",
+      method: "GET"
+    }).then((userData) => {
+      console.log(userData);
+    });
+
+  });
+
+
+
+
 
 });
