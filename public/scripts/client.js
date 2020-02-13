@@ -33,8 +33,6 @@ $(document).ready(() => {
     let timeStr = timeElapsed(msDate);
 
     let likedBool = resObj.liked;
-
-
     resObj = chooseLikeElement(resObj);
 
     let resTemplate = `
@@ -58,7 +56,7 @@ $(document).ready(() => {
       <footer>
         <div id="likes-ratings">
           <div id="like-div">
-            <img id="like-icon" data-liked="${likedBool}" href="" src="${escape(resObj.liked)}">
+            <img id="like-icon" data-liked="${likedBool}" data-id="${escape(resObj.id)}" src="${escape(resObj.liked)}">
             <span id="likes"> ${escape(resObj.likes)}</span>
           </div>
           <span class="ratings">
@@ -140,7 +138,7 @@ $(document).ready(() => {
       </span>
       <span id="foot">
         <div id="like-div">
-          <img id="like-icon" data-liked="${likedBool}" src="${escape(resObj.liked)}">
+          <img id="like-icon" data-liked="${likedBool}" data-id="${escape(resObj.id)}" src="${escape(resObj.liked)}">
           <span id="likes"> ${escape(resObj.likes)}</span>
         </div>
         <span id="res-likes">Created: ${timeStr}</span>
@@ -362,19 +360,6 @@ $(document).ready(() => {
     resObjArr.forEach((value) => {
       resContainer.append(callback(value));
     });
-
-    $(".resource-container").click(function(event) {
-
-      $.ajax({
-        url: "/user/resource",
-        method: "POST",
-        data: {ID: $(this).attr('name')}
-      }).then( function(resourceData) {
-        loadFullResource(resourceData);
-        $("#single-resource").slideDown("slow",() => {});
-        $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
-      }).catch(err => console.log("RENDER FULL RESOURCE ERR", err.message));
-    });
   };
 
 
@@ -421,21 +406,47 @@ $(document).ready(() => {
 
   });
 
+  //TODO: if a user was to mash like-icon over and over it lags
   $("body").on("click","#like-icon", function(event) {
+    event.stopPropagation();
+
     let liked = $(this).attr('data-liked');
-    console.log(liked);
-    
+    let resID = $(this).attr('data-id');
+    let likesNum = Number($(this).next().text());
+    console.log("NUM OF LIKES:", likesNum);
+
+    if (liked === 'true') { liked = true }
+    else { liked = false };
+
     if(liked) {
       $(this).attr("src","../../public/images/like.png");
+      $(this).next().text((likesNum - 1).toString());
+      $(this).attr("data-liked", "false");
     } else {
       $(this).attr("src","../../public/images/liked.png");
+      $(this).next().text((likesNum + 1).toString());
+      $(this).attr("data-liked", "true");
     };
-    // $.ajax({
-    //   url: "/user/profile/editname",
-    //   method: "POST",
-    //   data: newName
-    // }).then().catch(err => console.log(err.message));
 
+    $.ajax({
+      url: "/user/like",
+      method: "POST",
+      data: {liked: liked, ID: resID}
+    }).then().catch(err => console.log("AJAX CALL ERR: ", err.message));
+  });
+
+  $("body").on("click", ".resource-container", function(event) {
+    if(event.target.id === "like-icon") { return };
+
+    $.ajax({
+      url: "/user/resource",
+      method: "POST",
+      data: {ID: $(this).attr('name')}
+    }).then( function(resourceData) {
+      loadFullResource(resourceData);
+      $("#single-resource").slideDown("slow",() => {});
+      $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
+    }).catch(err => console.log("RENDER FULL RESOURCE ERR", err.message));
   });
 
   //Request email change.

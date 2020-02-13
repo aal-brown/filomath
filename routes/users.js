@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, isLiked } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, toggleLike } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -212,6 +212,22 @@ module.exports = function(userRouter, database) {
         res.send(comment);
       })
       .catch((err) => res.send(err.message));
+  });
+
+  userRouter.post("/like", (req, res) => {
+    let likeData = {
+      resID: req.body.ID,
+      userID: req.session.userID,
+      liked: req.body.liked
+    }
+
+    if (likeData.liked === 'true') { likeData.liked = true }
+    else { likeData.liked = false };
+
+    // console.log(likeData);
+
+    return toggleLike(likeData, database)
+      .then(res => console.log(res)).catch((err) => res.send("LIKE ROUTE ERR:", err.message));
   });
 
   return userRouter;

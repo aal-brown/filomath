@@ -305,22 +305,28 @@ const addComment = function(commentData, db) {
     });
 };
 
-const addLike = function(resID, userID, db) {
-  return db.query(`
-  INSERT INTO likes (resource_id, user_id)
-  VALUES ($1, $2)
-  RETURNING *;
-  `, [resID, userID])
-    .then((res) => {
-      return res.rows[0];
+const toggleLike = function(likeData, db) {
+  if (likeData.liked) {
+    return db.query(`
+    DELETE FROM likes
+    WHERE resource_id = $1 AND user_id = $2
+    RETURNING *;
+    `, [likeData.resID, likeData.userID])
+      .then((res) => {
+      // console.log("DELETE LIKE: ", res.rows);
+      return res.rows;
     });
-};
-
-const removeLike = function(resID, userID, db) {
-  return db.query(`
-  DELETE FROM likes
-  WHERE resource_id = $1 AND user_id = $2;
-  `, [resID, userID]);
+  } else {
+    return db.query(`
+    INSERT INTO likes (resource_id, user_id)
+    VALUES ($1, $2)
+    RETURNING *;
+    `, [likeData.resID, likeData.userID])
+    .then((res) => {
+      // console.log("ADD LIKE: ", res.rows)
+      return res.rows;
+    });
+  };
 };
 
 module.exports = {
@@ -340,6 +346,5 @@ module.exports = {
   getFullResource,
   addComment,
   isLiked,
-  addLike,
-  removeLike
+  toggleLike
 }
