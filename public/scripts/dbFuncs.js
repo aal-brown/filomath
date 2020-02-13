@@ -32,6 +32,19 @@ const getCategoryFromId = function(category, db) {
     });
 };
 
+//checks if a user has liked a specific resource, returns true if they have
+const isLiked = function(resID, userID, db) {
+  return db.query(`
+  SELECT * FROM likes
+  WHERE resource_id = $1 AND user_id = $2
+  `,[resID, userID])
+    .then((res) => {
+      let result = res.rows;
+      if(result.length === 0) {return false};
+      return true;
+    })
+}
+
 //Function to retrive all resources. It will take in 4 parameters, the userId, the database the 'where' parameter and then a sort by parameter.""
 const getUserResources = function(userID,db) {
   let resObject;
@@ -48,12 +61,31 @@ const getUserResources = function(userID,db) {
   `,[userID])
     .then((res) => {
       resObject = res.rows;
-
-      resObject.sort((a,b) => {
-        return b.date - a.date;
-      });
-      return resObject;
-    });
+      return db.query(`
+      SELECT categories.category
+      FROM resources
+      JOIN resource_categories ON resources.id = resource_categories.resource_id
+      JOIN categories ON resource_categories.category_id = categories.id
+      WHERE resources.user_id = $1;
+      `,[userID]);
+    })
+      .then((res) => {
+        let i = 0;
+        for (let each of resObject) {
+          each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
+          i++;
+        }
+        //Gives us the newest resources first
+        resObject.sort((a,b) => {
+          return b.date - a.date;
+        })
+      })
+        .then( async () => {
+          for (let row of resObject) {
+            row.liked = await isLiked(row.id, userID, db);
+          }
+          return resObject;
+        });
 };
 
 
@@ -85,8 +117,13 @@ const getSearchResources = function(userID, db, searchParams) {
       resObject.sort((a,b) => {
         return b.date - a.date;
       });
-      return resObject;
-    });
+    })
+      .then( async () => {
+        for (let row of resObject) {
+          row.liked = await isLiked(row.id, userID, db);
+        }
+        return resObject;
+      });
 };
 
 const getResByCat = function(userID, db, categoryID) {
@@ -220,7 +257,7 @@ const createResource = function(resourceInfo, db, userID) {
     });
 };
 
-const getFullResource = function(resID, db) {
+const getFullResource = function(resID, userID, db) {
   let resObj;
   //query database for all resource data except for comments
   return db.query(`
@@ -246,10 +283,13 @@ const getFullResource = function(resID, db) {
       `, [resID]);
     })
     .then((res) => {
-      //append comment data to resource object and return object
+      //append comment data to resource object
       resObj.commentData = res.rows;
-      return resObj;
-    });
+    })
+      .then( async () => {
+        resObj.liked = await isLiked(resObj.id, userID, db);
+        return resObj;
+      });
 };
 
 const addComment = function(commentData, db) {
@@ -263,6 +303,30 @@ const addComment = function(commentData, db) {
     .then((res) => {
       return res.rows[0];
     });
+};
+
+const toggleLike = function(likeData, db) {
+  if (likeData.liked) {
+    return db.query(`
+    DELETE FROM likes
+    WHERE resource_id = $1 AND user_id = $2
+    RETURNING *;
+    `, [likeData.resID, likeData.userID])
+      .then((res) => {
+      // console.log("DELETE LIKE: ", res.rows);
+      return res.rows;
+    });
+  } else {
+    return db.query(`
+    INSERT INTO likes (resource_id, user_id)
+    VALUES ($1, $2)
+    RETURNING *;
+    `, [likeData.resID, likeData.userID])
+    .then((res) => {
+      // console.log("ADD LIKE: ", res.rows)
+      return res.rows;
+    });
+  };
 };
 
 module.exports = {
@@ -280,6 +344,7 @@ module.exports = {
   getCategories,
   changeEmail,
   getFullResource,
-  addComment
-};
-
+  addComment,
+  isLiked,
+  toggleLike
+}

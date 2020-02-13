@@ -34,8 +34,10 @@ $(document).ready(() => {
 
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
-
     let timeStr = timeElapsed(msDate);
+
+    let likedBool = resObj.liked;
+    resObj = chooseLikeElement(resObj);
 
     let resTemplate = `
       <article class="resource-container" name="${escape(resObj.id)}">
@@ -57,10 +59,13 @@ $(document).ready(() => {
       </span>
       <footer>
         <div id="likes-ratings">
-          <span id="likes"><b>Likes:</b> ${escape(resObj.likes)}</span>
+          <div id="like-div">
+            <img id="like-icon" data-liked="${likedBool}" data-id="${escape(resObj.id)}" src="${escape(resObj.liked)}">
+            <span id="likes"> ${escape(resObj.likes)}</span>
+          </div>
           <span class="ratings">
             <span id="personal-rating"><b>My Rating:</b> ${escape(resObj.user_rating)}</span>
-            <span id="personal-rating"><b>Global Rating:</b> ${escape(Number(resObj.global_rating).toFixed(1))}</span>
+            <span id="global-rating"><b>Global Rating:</b> ${escape(Number(resObj.global_rating).toFixed(1))}</span>
           </span>
         </div>
         <div id="url-link">
@@ -77,8 +82,9 @@ $(document).ready(() => {
 
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
-
     let timeStr = timeElapsed(msDate);
+
+    resObj = chooseLikeElement(resObj);
 
     let resTemplate = `
       <article class="resource-container">
@@ -93,8 +99,7 @@ $(document).ready(() => {
         <span id="description">${escape(resObj.description)}</span>
       </span>
       <footer>
-          <span id="likes">Likes: ${escape(resObj.likes)}</span>
-          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
+      <span id="likes">${escape(resObj.liked)} : ${escape(resObj.likes)}</span>          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
             <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
@@ -109,8 +114,11 @@ $(document).ready(() => {
   const createFullResourceElement = function(resObj) {
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
-
     let timeStr = timeElapsed(msDate);
+
+    let likedBool = resObj.liked;
+
+    resObj = chooseLikeElement(resObj);
 
     let fullResTemplate = `
     <article class="resource-page">
@@ -133,7 +141,10 @@ $(document).ready(() => {
         </span>
       </span>
       <span id="foot">
-        <span id="res-likes">Likes: ${escape(resObj.likes)}</span>
+        <div id="like-div">
+          <img id="like-icon" data-liked="${likedBool}" data-id="${escape(resObj.id)}" src="${escape(resObj.liked)}">
+          <span id="likes"> ${escape(resObj.likes)}</span>
+        </div>
         <span id="res-likes">Created: ${timeStr}</span>
         <span class="res-ratings">
           <span id="my-rating">My Rating: ${escape(resObj.user_rating)}</span>
@@ -197,7 +208,7 @@ $(document).ready(() => {
         data: { ID: resID, commentSubmission: message }
       }).then(function(commentData) {
         appendNewComment(commentData);
-      });
+      }).catch(err => console.log(err.message));
     });
 
     $("#return").on("click", function(event) {
@@ -348,9 +359,9 @@ $(document).ready(() => {
           data: catData
         })
           .then((res) => {
-            renderResources(res,createResourceElement);
-          });
 
+            renderResources(res,createResourceElement);
+          }).catch(err => console.log(err.message));
       });
 
     });
@@ -378,19 +389,6 @@ $("#fetch-cats").on("click", function(event) {
     resObjArr.forEach((value) => {
       resContainer.append(callback(value));
     });
-
-    $(".resource-container").click(function(event) {
-
-      $.ajax({
-        url: "/user/resource",
-        method: "POST",
-        data: {ID: $(this).attr('name')}
-      }).then( function(resourceData) {
-        loadFullResource(resourceData);
-        $("#single-resource").slideDown("slow",() => {});
-        $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
-      });
-    });
   };
 
 
@@ -403,7 +401,8 @@ $("#fetch-cats").on("click", function(event) {
       method: "GET"
     }).then(function(resourceData) {
       renderResources(resourceData, callback);
-    });
+    })
+    .catch(err => console.log(err.message));
   };
 
   //This function loads the user resources as soon as the page loads from a get request to the main page
@@ -432,8 +431,51 @@ $("#fetch-cats").on("click", function(event) {
       url: "/user/profile/editname",
       method: "POST",
       data: newName
-    }).then();
+    }).then().catch(err => console.log(err.message));
 
+  });
+
+  //TODO: if a user was to mash like-icon over and over it lags
+  $("body").on("click","#like-icon", function(event) {
+    event.stopPropagation();
+
+    let liked = $(this).attr('data-liked');
+    let resID = $(this).attr('data-id');
+    let likesNum = Number($(this).next().text());
+    console.log("NUM OF LIKES:", likesNum);
+
+    if (liked === 'true') { liked = true }
+    else { liked = false };
+
+    if(liked) {
+      $(this).attr("src","../../public/images/like.png");
+      $(this).next().text((likesNum - 1).toString());
+      $(this).attr("data-liked", "false");
+    } else {
+      $(this).attr("src","../../public/images/liked.png");
+      $(this).next().text((likesNum + 1).toString());
+      $(this).attr("data-liked", "true");
+    };
+
+    $.ajax({
+      url: "/user/like",
+      method: "POST",
+      data: {liked: liked, ID: resID}
+    }).then().catch(err => console.log("AJAX CALL ERR: ", err.message));
+  });
+
+  $("body").on("click", ".resource-container", function(event) {
+    if(event.target.id === "like-icon") { return };
+
+    $.ajax({
+      url: "/user/resource",
+      method: "POST",
+      data: {ID: $(this).attr('name')}
+    }).then( function(resourceData) {
+      loadFullResource(resourceData);
+      $("#single-resource").slideDown("slow",() => {});
+      $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
+    }).catch(err => console.log("RENDER FULL RESOURCE ERR", err.message));
   });
 
   //Request email change.
@@ -451,7 +493,7 @@ $("#fetch-cats").on("click", function(event) {
       url: "/user/profile/editemail",
       method: "POST",
       data: newEmail
-    }).then();
+    }).then().catch(err => console.log(err.message));
 
   });
 
@@ -481,14 +523,14 @@ $("#fetch-cats").on("click", function(event) {
       data: searchParam
     }).then((res) => {
       renderResources(res,createResourceElement);
-    });
-
+    }).catch(err => console.log(err.message));
   });
 
   //this toggles the new resource form to show or hide it
   $("#newresource").on("click", function(event) {
     event.preventDefault();
     $("#resource-form").slideToggle("fast", () => {});
+    $("#title").focus();
   });
 
 
@@ -501,7 +543,7 @@ $("#fetch-cats").on("click", function(event) {
       method: "GET"
     }).then((userData) => {
       renderProfile(userData, makeProfile);
-    });
+    }).catch(err => console.log(err.message));
 
   });
 

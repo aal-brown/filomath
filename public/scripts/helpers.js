@@ -24,3 +24,10 @@ const timeElapsed = function(dateItem) {
   return timeElStr + "ago";
 };
 
+const chooseLikeElement = function(resObj) {
+  if(resObj.liked) { resObj.liked = "../../public/images/liked.png" }
+  else { resObj.liked = "../../public/images/like.png"};
+
+  return resObj
+}
+
