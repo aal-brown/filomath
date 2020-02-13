@@ -36,22 +36,30 @@ $(document).ready(() => {
     let resTemplate = `
       <article class="resource-container" name="${escape(resObj.id)}">
       <header>
-        <span id="title">${escape(resObj.title)}</span>
-        <span id="date">${escape(timeStr)}</span>
-        <span id="category"><b>Category:</b> ${escape(resObj.category)}</span>
+        <div id="time-category">
+          <span id="date">${escape(timeStr)}</span>
+          <span id="category"><b>Category:</b> ${escape(resObj.category)}</span>
+        </div>
+        <div id="title-block">
+          <span id="title"><b>${escape(resObj.title)}</b></span>
+        </div>
       </header>
       <span id="body">
         <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}">
         <span id="description">${escape(resObj.description)}</span>
       </span>
       <footer>
+        <div id="likes-ratings">
           <span id="likes">Likes: ${escape(resObj.likes)}</span>
-          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
             <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
           </span>
-        </footer>
+        </div>
+        <div id="url-link">
+          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
+        </div>
+      </footer>
     </article>
   `;
     return resTemplate;
