@@ -257,7 +257,7 @@ const createResource = function(resourceInfo, db, userID) {
     });
 };
 
-const getFullResource = function(resID, db) {
+const getFullResource = function(resID, userID, db) {
   let resObj;
   //query database for all resource data except for comments
   return db.query(`
@@ -287,10 +287,8 @@ const getFullResource = function(resID, db) {
       resObj.commentData = res.rows;
     })
       .then( async () => {
-        for (let row of resObject) {
-          row.liked = await isLiked(row.id, userID, db);
-        }
-        return resObject;
+        resObj.liked = await isLiked(resObj.id, userID, db);
+        return resObj;
       });
 };
 

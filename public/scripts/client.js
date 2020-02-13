@@ -364,7 +364,7 @@ $(document).ready(() => {
         loadFullResource(resourceData);
         $("#single-resource").slideDown("slow",() => {});
         $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
-      }).catch(err => console.log(err.message));
+      }).catch(err => console.log("RENDER FULL RESOURCE ERR", err.message));
     });
   };
 

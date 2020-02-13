@@ -190,11 +190,12 @@ module.exports = function(userRouter, database) {
 
   userRouter.post("/resource", (req, res) => {
     let resID = req.body.ID;
-    return getFullResource(resID, database)
+    let userID = req.session.userID
+    return getFullResource(resID, userID, database)
       .then((fullResource) => {
         res.send(fullResource);
       })
-      .catch((err) => res.send(err.message));
+      .catch((err) => console.log("resource route err:", err.message));
   });
 
   userRouter.post("/comment", async (req, res) => {
