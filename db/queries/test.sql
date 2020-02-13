@@ -152,7 +152,7 @@ WHERE users.id = 1; */
   GROUP BY resources.id, users.id, categories.category; */
 
 
-/* Fetch liked resources, excliding resources where the user ID matches the current user.*/
+/* Fetch liked resources, excluding resources where the user ID matches the current user.*/
 SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = 1 group by resources.id, ratings.rating) as user_rating, categories.category
   FROM resources
   JOIN users ON resources.user_id = users.id

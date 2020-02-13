@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, toggleLike } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, toggleLike, getLikedResources } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -29,6 +29,15 @@ module.exports = function(userRouter, database) {
     return getUserResources(userID,database)
       .then((userResources) => {
         res.send(userResources);
+      });
+  });
+
+//This handler is used for user requests for their liked resources
+  userRouter.get("/lresources", (req, res) => {
+    let userID = req.session.userID;
+    return getLikedResources(userID,database)
+      .then((likedResources) => {
+        res.send(likedResources);
       });
   });
 

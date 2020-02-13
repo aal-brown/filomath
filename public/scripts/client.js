@@ -526,6 +526,25 @@ $("#fetch-cats").on("click", function(event) {
     }).catch(err => console.log(err.message));
   });
 
+//This is a specific get request for liked resources
+  const loadLikedResources = function(callback) {
+    $.ajax({
+      url: "/user/lresources",
+      method: "GET"
+    }).then(function(resourceData) {
+      renderResources(resourceData, callback);
+    })
+      .catch(err => console.log(err.message));
+  };
+
+
+  //This function will load the users liked resources when the "My Resources" item is clicked on in the nav-bar
+  $("#likedresources").on("click", function(event) {
+    event.preventDefault();
+    loadLikedResources(createResourceElement);
+  });
+
+
   //this toggles the new resource form to show or hide it
   $("#newresource").on("click", function(event) {
     event.preventDefault();
