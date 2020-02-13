@@ -49,6 +49,14 @@
   align-items: center;
 }
 
+.resource-container #like-icon {
+  width: 1.5em;
+}
+
+#like-div {
+  display: flex;
+}
+
 #likes-ratings {
   display: flex;
   width: 100%;

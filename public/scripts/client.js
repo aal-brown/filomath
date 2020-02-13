@@ -54,9 +54,10 @@ $(document).ready(() => {
       </span>
       <footer>
         <div id="likes-ratings">
-          <img id="like-icon" src="">
-          <span id="likes">${escape(resObj.liked)} : ${escape(resObj.likes)}</span>
-
+          <div id="like-div">
+            <img id="like-icon" src="${escape(resObj.liked)}">
+            <span id="likes"> ${escape(resObj.likes)}</span>
+          </div>
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
             <span id="global-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
@@ -133,7 +134,10 @@ $(document).ready(() => {
         </span>
       </span>
       <span id="foot">
-      <span id="likes">${escape(resObj.liked)} : ${escape(resObj.likes)}</span>
+        <div id="like-div">
+          <img id="like-icon" src="${escape(resObj.liked)}">
+          <span id="likes"> ${escape(resObj.likes)}</span>
+        </div>
         <span id="res-likes">Created: ${timeStr}</span>
         <span class="res-ratings">
           <span id="my-rating">My Rating: ${escape(resObj.user_rating)}</span>

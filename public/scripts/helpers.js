@@ -25,8 +25,8 @@ const timeElapsed = function(dateItem) {
 };
 
 const chooseLikeElement = function(resObj) {
-  if(resObj.liked) { resObj.liked = "liked!" }
-  else { resObj.liked = "not liked!"};
+  if(resObj.liked) { resObj.liked = "../../public/images/liked.png" }
+  else { resObj.liked = "../../public/images/like.png"};
 
   return resObj
 }
