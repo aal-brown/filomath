@@ -61,31 +61,17 @@ const getUserResources = function(userID,db) {
   `,[userID])
     .then((res) => {
       resObject = res.rows;
-      return db.query(`
-      SELECT categories.category
-      FROM resources
-      JOIN resource_categories ON resources.id = resource_categories.resource_id
-      JOIN categories ON resource_categories.category_id = categories.id
-      WHERE resources.user_id = $1;
-      `,[userID]);
-    })
-      .then((res) => {
-        let i = 0;
-        for (let each of resObject) {
-          each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
-          i++;
-        }
-        //Gives us the newest resources first
-        resObject.sort((a,b) => {
-          return b.date - a.date;
-        })
+      //Gives us the newest resources first
+      resObject.sort((a,b) => {
+        return b.date - a.date;
       })
-        .then( async () => {
-          for (let row of resObject) {
-            row.liked = await isLiked(row.id, userID, db);
-          }
-          return resObject;
-        });
+    })
+      .then( async () => {
+        for (let row of resObject) {
+          row.liked = await isLiked(row.id, userID, db);
+        }
+        return resObject;
+      });
 };
 
 
@@ -145,6 +131,11 @@ const getResByCat = function(userID, db, categoryID) {
       resObject.sort((a,b) => {
         return b.date - a.date;
       });
+    })
+    .then( async () => {
+      for (let row of resObject) {
+        row.liked = await isLiked(row.id, userID, db);
+      }
       return resObject;
     });
 };

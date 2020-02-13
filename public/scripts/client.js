@@ -533,6 +533,10 @@ $("#fetch-cats").on("click", function(event) {
     $("#title").focus();
   });
 
+  $("body").on("click", "#cancel-form", function(event) {
+    $("#resource-form").slideToggle("fast", () => {});
+  });
+
 
   //Handler for when "My Profile" button is clicked.
   $("#myprofile").on("click", function(event) {

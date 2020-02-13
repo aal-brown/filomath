@@ -29,19 +29,11 @@ body {
   padding: 0;
   color: #F9F1E9;
   text-align: center;
-  font-size: 7em;
+  font-size: 3em;
   letter-spacing: 0.1em;
   font-weight: 200;
   animation: pulse1 ease-in-out 15s infinite;/* , grow 10s infinite; */
   border: none;
-}
-
-
-.content {
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; */
 }
 
 #page-content {

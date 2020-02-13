@@ -179,7 +179,7 @@ module.exports = function(userRouter, database) {
 
   userRouter.post("/newres", async (req, res) => {
     let resourceInfo = req.body;
-
+    if(resourceInfo.rating === "") { resourceInfo.rating = 5 };
     /* resourceInfo.category = await getCategoryFromId(resourceInfo.category, database); */
     let userID = req.session.userID;
     createResource(resourceInfo, database, userID)
