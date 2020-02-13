@@ -305,6 +305,24 @@ const addComment = function(commentData, db) {
     });
 };
 
+const addLike = function(resID, userID, db) {
+  return db.query(`
+  INSERT INTO likes (resource_id, user_id)
+  VALUES ($1, $2)
+  RETURNING *;
+  `, [resID, userID])
+    .then((res) => {
+      return res.rows[0];
+    });
+};
+
+const removeLike = function(resID, userID, db) {
+  return db.query(`
+  DELETE FROM likes
+  WHERE resource_id = $1 AND user_id = $2;
+  `, [resID, userID]);
+};
+
 module.exports = {
   getUserWithEmail,
   getCategoryFromId,
@@ -321,5 +339,7 @@ module.exports = {
   changeEmail,
   getFullResource,
   addComment,
-  isLiked
+  isLiked,
+  addLike,
+  removeLike
 }

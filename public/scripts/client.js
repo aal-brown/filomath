@@ -32,6 +32,9 @@ $(document).ready(() => {
     let msDate = rDate.getTime();
     let timeStr = timeElapsed(msDate);
 
+    let likedBool = resObj.liked;
+
+
     resObj = chooseLikeElement(resObj);
 
     let resTemplate = `
@@ -55,7 +58,7 @@ $(document).ready(() => {
       <footer>
         <div id="likes-ratings">
           <div id="like-div">
-            <img id="like-icon" src="${escape(resObj.liked)}">
+            <img id="like-icon" data-liked="${likedBool}" href="" src="${escape(resObj.liked)}">
             <span id="likes"> ${escape(resObj.likes)}</span>
           </div>
           <span class="ratings">
@@ -111,6 +114,8 @@ $(document).ready(() => {
     let msDate = rDate.getTime();
     let timeStr = timeElapsed(msDate);
 
+    let likedBool = resObj.liked;
+
     resObj = chooseLikeElement(resObj);
 
     let fullResTemplate = `
@@ -135,7 +140,7 @@ $(document).ready(() => {
       </span>
       <span id="foot">
         <div id="like-div">
-          <img id="like-icon" src="${escape(resObj.liked)}">
+          <img id="like-icon" data-liked="${likedBool}" src="${escape(resObj.liked)}">
           <span id="likes"> ${escape(resObj.likes)}</span>
         </div>
         <span id="res-likes">Created: ${timeStr}</span>
@@ -413,6 +418,23 @@ $(document).ready(() => {
       method: "POST",
       data: newName
     }).then().catch(err => console.log(err.message));
+
+  });
+
+  $("body").on("click","#like-icon", function(event) {
+    let liked = $(this).attr('data-liked');
+    console.log(liked);
+    
+    if(liked) {
+      $(this).attr("src","../../public/images/like.png");
+    } else {
+      $(this).attr("src","../../public/images/liked.png");
+    };
+    // $.ajax({
+    //   url: "/user/profile/editname",
+    //   method: "POST",
+    //   data: newName
+    // }).then().catch(err => console.log(err.message));
 
   });
 
