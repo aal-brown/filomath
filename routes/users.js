@@ -1,6 +1,6 @@
 
 const bcrypt = require('bcrypt');
-const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, toggleLike } = require("../public/scripts/dbFuncs");
+const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, toggleLike, getLikedResources } = require("../public/scripts/dbFuncs");
 
 /*
  * All routes for Users are defined here
@@ -29,6 +29,15 @@ module.exports = function(userRouter, database) {
     return getUserResources(userID,database)
       .then((userResources) => {
         res.send(userResources);
+      });
+  });
+
+//This handler is used for user requests for their liked resources
+  userRouter.get("/lresources", (req, res) => {
+    let userID = req.session.userID;
+    return getLikedResources(userID,database)
+      .then((likedResources) => {
+        res.send(likedResources);
       });
   });
 
@@ -69,11 +78,17 @@ module.exports = function(userRouter, database) {
   exports.login = login;
 
   userRouter.post('/login', (req, res) => {
+    let userID = req.session.userID;
+
+    if (userID) {
+      res.session = null;
+    }
+
     const {email, password} = req.body;
     login(email, password)
       .then((user) => {
         if (!user) {
-          res.send({error: "error"});
+          res.redirect("/main/");
           return;
         }
         req.session.userID = user.id;
@@ -89,14 +104,20 @@ module.exports = function(userRouter, database) {
     let userID = req.session.userID;
 
     if (!userID) {
-      res.redirect(303,"/main");
+      return res.redirect(303,"/main");
     }
     req.session = null;
-    res.redirect(303,"/main");
+    return res.redirect(303,"/main");
   });
 
   //I will need to handle whether the username is already taken (done) or not or if that email is already being used (not done)
   userRouter.post("/register", (req, res) => {
+
+    let userID = req.session.userID;
+
+    if (userID) {
+      res.session = null;
+    }
     const userInfo = req.body;
 
     checkUsername(userInfo.username, database)
@@ -104,6 +125,8 @@ module.exports = function(userRouter, database) {
 
         if (exists) {
           res.send("Error, username taken");
+          res.redirect("/main/");
+          return;
 
         } else {
           userInfo.password = bcrypt.hashSync(userInfo.password, 12);
@@ -112,7 +135,7 @@ module.exports = function(userRouter, database) {
             .then((user) => {
 
               if (!user) {
-                res.redirect("/main)");
+                res.redirect(303,"/main)");
                 return;
               }
               req.session.userId = user.id;
