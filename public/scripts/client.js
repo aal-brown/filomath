@@ -37,30 +37,42 @@ $(document).ready(() => {
     let resTemplate = `
       <article class="resource-container" name="${escape(resObj.id)}">
       <header>
-        <span id="title">${escape(resObj.title)}</span>
-        <span id="date">${escape(timeStr)}</span>
-        <span id="category"><b>Category:</b> ${escape(resObj.category)}</span>
+        <div id="time-category">
+          <div id="date-username">
+          <span id="date">Created ${escape(timeStr)}</span>
+          <span id="username">by <b><i>${escape(resObj.username)}</i></b></span>
+          </div>
+          <span id="category"><b>Category:</b> ${escape(resObj.category)}</span>
+        </div>
+        <div id="title-block">
+          <span id="title"><b>${escape(resObj.title)}</b></span>
+        </div>
       </header>
       <span id="body">
         <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}">
         <span id="description">${escape(resObj.description)}</span>
       </span>
       <footer>
+        <div id="likes-ratings">
           <img id="like-icon" src="">
           <span id="likes">${escape(resObj.liked)} : ${escape(resObj.likes)}</span>
-          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
+
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
             <span id="global-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
           </span>
-        </footer>
+        </div>
+        <div id="url-link">
+          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
+        </div>
+      </footer>
     </article>
   `;
     return resTemplate;
   };
 
   //Function to create the html for the searched resources objects
-  const createSearchedElement = function(resObj) {
+/*   const createSearchElement = function(resObj) {
 
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
@@ -90,7 +102,7 @@ $(document).ready(() => {
     </article>
   `;
     return resTemplate;
-  };
+  }; */
 
 
   const createFullResourceElement = function(resObj) {
@@ -304,7 +316,7 @@ $(document).ready(() => {
   };
 
 
-$("#navbarDropdownMenuLink").on("click", function(event) {
+  $("#navbarDropdownMenuLink").on("click", function(event) {
     event.preventDefault();
     $.ajax({
       url: "/user/categories",
@@ -323,7 +335,8 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
           data: catData
         })
           .then((res) => {
-            renderResources(res,createSearchedElement);
+
+            renderResources(res,createResourceElement);
           }).catch(err => console.log(err.message));
       });
 
@@ -443,9 +456,8 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
       method: "POST",
       data: searchParam
     }).then((res) => {
-      renderResources(res,createSearchedElement);
+      renderResources(res,createResourceElement);
     }).catch(err => console.log(err.message));
-
   });
 
   //this toggles the new resource form to show or hide it
