@@ -36,30 +36,19 @@ const getCategoryFromId = function(category, db) {
 const getUserResources = function(userID,db) {
   let resObject;
   return db.query(`
-  SELECT resources.id, resources.user_id, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.user_id = $1 and ratings.resource_id = resources.id) as user_rating
+  SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = $1 group by resources.id, ratings.rating) as user_rating, categories.category
   FROM resources
+  JOIN users ON resources.user_id = users.id
   LEFT JOIN ratings AS t ON resources.id = t.resource_id
   LEFT JOIN likes ON resources.id = likes.resource_id
+  LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
+  LEFT JOIN categories ON resource_categories.category_id = categories.id
   WHERE resources.user_id = $1
-  GROUP BY resources.id;
+  GROUP BY resources.id, users.id, categories.category;
   `,[userID])
     .then((res) => {
       resObject = res.rows;
-      return db.query(`
-      SELECT categories.category
-      FROM resources
-      JOIN resource_categories ON resources.id = resource_categories.resource_id
-      JOIN categories ON resource_categories.category_id = categories.id
-      WHERE resources.user_id = $1;
-      `,[userID]);
-    })
-    .then((res) => {
-      let i = 0;
-      for (let each of resObject) {
-        each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
-        i++;
-      }
-      //Gives us the newest resources first
+
       resObject.sort((a,b) => {
         return b.date - a.date;
       });

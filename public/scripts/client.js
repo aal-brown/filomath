@@ -37,7 +37,10 @@ $(document).ready(() => {
       <article class="resource-container" name="${escape(resObj.id)}">
       <header>
         <div id="time-category">
-          <span id="date">${escape(timeStr)}</span>
+          <div id="date-username">
+          <span id="date">Created ${escape(timeStr)}</span>
+          <span id="username">by <b><i>${escape(resObj.username)}</i></b></span>
+          </div>
           <span id="category"><b>Category:</b> ${escape(resObj.category)}</span>
         </div>
         <div id="title-block">
@@ -66,7 +69,7 @@ $(document).ready(() => {
   };
 
   //Function to create the html for the searched resources objects
-  const createSearchedElement = function(resObj) {
+/*   const createSearchElement = function(resObj) {
 
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
@@ -96,7 +99,7 @@ $(document).ready(() => {
     </article>
   `;
     return resTemplate;
-  };
+  }; */
 
 
   const createFullResourceElement = function(resObj) {
@@ -328,7 +331,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
           data: catData
         })
           .then((res) => {
-            renderResources(res,createSearchedElement);
+            renderResources(res,createResourceElement);
           });
 
       });
@@ -448,7 +451,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
       method: "POST",
       data: searchParam
     }).then((res) => {
-      renderResources(res,createSearchedElement);
+      renderResources(res,createResourceElement);
     });
 
   });
