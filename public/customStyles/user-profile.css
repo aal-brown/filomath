@@ -1,13 +1,15 @@
 #profile-container {
+  margin-top:1em;
   display: flex;
   flex-direction: column;
   width: 75%;
-  height: 50em;
+  height: 100%;
   border: solid;
   border-radius: 0.5em;
   align-items: center;
   justify-content: space-evenly;
-  font-size: 1.25;
+  font-size: 1.5em;
+  background-color: #F9F1E9;
 }
 
 /* #main-cont {

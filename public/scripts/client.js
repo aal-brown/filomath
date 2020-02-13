@@ -28,6 +28,10 @@ $(document).ready(() => {
   //Function to create the html for the "my resources" object
   const createResourceElement = function(resObj) {
 
+    if (resObj.user_rating === null) {
+      resObj.user_rating = "";
+    }
+
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
 
@@ -53,10 +57,10 @@ $(document).ready(() => {
       </span>
       <footer>
         <div id="likes-ratings">
-          <span id="likes">Likes: ${escape(resObj.likes)}</span>
+          <span id="likes"><b>Likes:</b> ${escape(resObj.likes)}</span>
           <span class="ratings">
-            <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
-            <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
+            <span id="personal-rating"><b>My Rating:</b> ${escape(resObj.user_rating)}</span>
+            <span id="personal-rating"><b>Global Rating:</b> ${escape(Number(resObj.global_rating).toFixed(1))}</span>
           </span>
         </div>
         <div id="url-link">
@@ -294,6 +298,7 @@ $(document).ready(() => {
     return profileTemplate;
   };
 
+  //For the nav bar drop down, this is the template for each nav item.
   const dropDwnCats = function(catData) {
 
     let dropDownTemplate = `
@@ -302,23 +307,35 @@ $(document).ready(() => {
     return dropDownTemplate;
   };
 
-  let dropDownContainer = $("#drop-down-1");
+  //A separate format is needed for the non-bootstrap drop down in the create new element.
+  const dropDwnCatsFormat2 = function(catData) {
 
-  const renderDropDown = function(resObjArr, callback) {
-    dropDownContainer.empty();
-    resObjArr.forEach((value) => {
-      dropDownContainer.append(callback(value));
-    });
+    let dropDownTemplate = `
+    <option class="dropdown-item-2" value="${escape(catData.id)}">${escape(catData.category)}</option>
+    `;
+    return dropDownTemplate;
   };
 
 
-$("#navbarDropdownMenuLink").on("click", function(event) {
+
+  const renderDropDown = function(resObjArr, callback, target) {
+    target.empty();
+    resObjArr.forEach((value) => {
+      target.append(callback(value));
+    });
+  };
+
+  let dropDownContainer = $("#drop-down-1");
+  let dropDownContainer2 = $("#drop-down-2");
+
+  //This renders the drop down menu for the navbar and allows clicks to be registered and the search to be triggered
+  $("#navbarDropdownMenuLink").on("click", function(event) {
     event.preventDefault();
     $.ajax({
       url: "/user/categories",
       method: "GET"
     }).then((catData) => {
-      renderDropDown(catData,dropDwnCats);
+      renderDropDown(catData,dropDwnCats,dropDownContainer);
 
       $(".dropdown-item").on("click", function(event) {
         event.preventDefault();
@@ -336,6 +353,18 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
 
       });
 
+    });
+  });
+
+
+//This renders the drop down menu for the new resources item
+$("#fetch-cats").on("click", function(event) {
+    event.preventDefault();
+    $.ajax({
+      url: "/user/categories",
+      method: "GET"
+    }).then((catData) => {
+      renderDropDown(catData,dropDwnCatsFormat2,dropDownContainer2);
     });
   });
 

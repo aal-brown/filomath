@@ -56,6 +56,10 @@ const widgetsRoutes = require("./routes/widgets");
 app.use("/api/widgets", widgetsRoutes(db));
 // Note: mount other resources here, using the same pattern above
 
+app.get("/", (req, res) => {
+  res.redirect("/user/");
+});
+
 // /api/endpoints
 /* const apiRouter = express.Router();
 apiRoutes(apiRouter, database);

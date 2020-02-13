@@ -1,0 +1,112 @@
+body {
+  font-family: 'Lato', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  max-width: 100%;
+  background: #111;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center center;
+}
+
+
+.container {
+  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/demo-bg.jpg");
+}
+
+.main-title {
+  position: absolute;
+  top: 1em;
+  right: 25%;
+  width: 50%;
+  padding: 0;
+  color: #F9F1E9;
+  text-align: center;
+  font-size: 7em;
+  letter-spacing: 0.1em;
+  font-weight: 200;
+  animation: pulse1 ease-in-out 15s infinite;/* , grow 10s infinite; */
+  border: none;
+}
+
+
+.content {
+  /* display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; */
+}
+
+#page-content {
+  display: flex;
+  width: 100%;
+  height: 60%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#description {
+  margin-top: 1em;
+  padding: 1em;
+  width: 25%;
+  height: auto;
+  border: none;
+  border-width: 1px;
+  border-radius: 0.5em;
+  font-style: italic;
+  border-color: #F9F1E9;
+  color: #F9F1E9;
+  background-color: transparent;
+  text-justify: inter-character;
+}
+
+.buttonsdiv {
+  width: 20%;
+}
+
+.sign-log-buttons {
+  width: 70%;
+  font-size: 2em;
+  /* border: solid;
+  border-color: #F9F1E9; */
+  color: #F9F1E9;
+  background-color: transparent;
+  letter-spacing: 0.05em;
+  font-weight: 50;
+ /*  border-radius: 0.5em;
+  border-width: 2px; */
+  /* animation: pulse2 ease-in-out 10s infinite; */
+}
+
+.modal-content {
+  background-color: #F9F1E9;
+}
+
+@keyframes pulse1 {
+  0%, 100% {
+    color: transparent;
+    /* border-color: transparent; */
+  }
+  50% {
+    color: #F9F1E9;
+    /* border-color:#F9F1E9; */
+  }
+}
+
+/* @keyframes grow {
+  0%, 100% {
+  }
+
+  50% {
+    font-size: 7em;
+  }
+} */
+
