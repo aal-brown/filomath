@@ -2,8 +2,6 @@
 const bcrypt = require('bcrypt');
 const { getUserWithEmail, getCategoryFromId, getUserWithID, addUser, checkUsername, getUserResources, getSearchResources, createResource, getUserDetails, changeName, getResByCat, getCategories, changeEmail, getFullResource, addComment, isLiked } = require("../public/scripts/dbFuncs");
 
-
-
 /*
  * All routes for Users are defined here
  * Since this file is loaded in server.js into api/users,

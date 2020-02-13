@@ -77,13 +77,12 @@ const getUserResources = function(userID,db) {
           return b.date - a.date;
         })
       })
-        // .then(() => {
-        //   for (let row of resObject) {
-        //     each[Object.keys(res.rows[i])[0]] = Object.values(res.rows[i])[0];
-        //     i++;
-        //   }
-        //   return resObject;
-        // });
+        .then( async () => {
+          for (let row of resObject) {
+            row.liked = await isLiked(row.id, userID, db);
+          }
+          return resObject;
+        });
 };
 
 
@@ -115,8 +114,13 @@ const getSearchResources = function(userID, db, searchParams) {
       resObject.sort((a,b) => {
         return b.date - a.date;
       });
-      return resObject;
-    });
+    })
+      .then( async () => {
+        for (let row of resObject) {
+          row.liked = await isLiked(row.id, userID, db);
+        }
+        return resObject;
+      });
 };
 
 const getResByCat = function(userID, db, categoryID) {
@@ -276,10 +280,15 @@ const getFullResource = function(resID, db) {
       `, [resID]);
     })
     .then((res) => {
-      //append comment data to resource object and return object
+      //append comment data to resource object
       resObj.commentData = res.rows;
-      return resObj;
-    });
+    })
+      .then( async () => {
+        for (let row of resObject) {
+          row.liked = await isLiked(row.id, userID, db);
+        }
+        return resObject;
+      });
 };
 
 const addComment = function(commentData, db) {

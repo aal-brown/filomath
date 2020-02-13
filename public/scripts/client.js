@@ -30,8 +30,9 @@ $(document).ready(() => {
 
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
-
     let timeStr = timeElapsed(msDate);
+
+    resObj = chooseLikeElement(resObj);
 
     let resTemplate = `
       <article class="resource-container" name="${escape(resObj.id)}">
@@ -46,7 +47,7 @@ $(document).ready(() => {
       </span>
       <footer>
           <img id="like-icon" src="">
-          <span id="likes">Likes: ${escape(resObj.likes)}</span>
+          <span id="likes">${escape(resObj.liked)} : ${escape(resObj.likes)}</span>
           <a href="${escape(resObj.resource_url)}">Visit Resource</a>
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
@@ -63,8 +64,9 @@ $(document).ready(() => {
 
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
-
     let timeStr = timeElapsed(msDate);
+
+    resObj = chooseLikeElement(resObj);
 
     let resTemplate = `
       <article class="resource-container">
@@ -79,8 +81,7 @@ $(document).ready(() => {
         <span id="description">${escape(resObj.description)}</span>
       </span>
       <footer>
-          <span id="likes">Likes: ${escape(resObj.likes)}</span>
-          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
+      <span id="likes">${escape(resObj.liked)} : ${escape(resObj.likes)}</span>          <a href="${escape(resObj.resource_url)}">Visit Resource</a>
           <span class="ratings">
             <span id="personal-rating">My Rating: ${escape(resObj.user_rating)}</span>
             <span id="personal-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
@@ -95,8 +96,9 @@ $(document).ready(() => {
   const createFullResourceElement = function(resObj) {
     let rDate = new Date(resObj.date);
     let msDate = rDate.getTime();
-
     let timeStr = timeElapsed(msDate);
+
+    resObj = chooseLikeElement(resObj);
 
     let fullResTemplate = `
     <article class="resource-page">
@@ -119,7 +121,7 @@ $(document).ready(() => {
         </span>
       </span>
       <span id="foot">
-        <span id="res-likes">Likes: ${escape(resObj.likes)}</span>
+      <span id="likes">${escape(resObj.liked)} : ${escape(resObj.likes)}</span>
         <span id="res-likes">Created: ${timeStr}</span>
         <span class="res-ratings">
           <span id="my-rating">My Rating: ${escape(resObj.user_rating)}</span>
@@ -183,7 +185,7 @@ $(document).ready(() => {
         data: { ID: resID, commentSubmission: message }
       }).then(function(commentData) {
         appendNewComment(commentData);
-      });
+      }).catch(err => console.log(err.message));
     });
 
     $("#return").on("click", function(event) {
@@ -322,8 +324,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
         })
           .then((res) => {
             renderResources(res,createSearchedElement);
-          });
-
+          }).catch(err => console.log(err.message));
       });
 
     });
@@ -350,7 +351,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
         loadFullResource(resourceData);
         $("#single-resource").slideDown("slow",() => {});
         $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
-      });
+      }).catch(err => console.log(err.message));
     });
   };
 
@@ -364,7 +365,8 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
       method: "GET"
     }).then(function(resourceData) {
       renderResources(resourceData, callback);
-    });
+    })
+    .catch(err => console.log(err.message));
   };
 
   //This function loads the user resources as soon as the page loads from a get request to the main page
@@ -393,7 +395,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
       url: "/user/profile/editname",
       method: "POST",
       data: newName
-    }).then();
+    }).then().catch(err => console.log(err.message));
 
   });
 
@@ -412,7 +414,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
       url: "/user/profile/editemail",
       method: "POST",
       data: newEmail
-    }).then();
+    }).then().catch(err => console.log(err.message));
 
   });
 
@@ -442,7 +444,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
       data: searchParam
     }).then((res) => {
       renderResources(res,createSearchedElement);
-    });
+    }).catch(err => console.log(err.message));
 
   });
 
@@ -463,7 +465,7 @@ $("#navbarDropdownMenuLink").on("click", function(event) {
       method: "GET"
     }).then((userData) => {
       renderProfile(userData, makeProfile);
-    });
+    }).catch(err => console.log(err.message));
 
   });
 
