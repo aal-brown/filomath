@@ -251,7 +251,7 @@ const getFullResource = function(resID, userID, db) {
   let resObj;
   //query database for all resource data except for comments
   return db.query(`
-  SELECT resources.id, resources.user_id, users.username as author, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = resources.user_id group by resources.id, ratings.rating) as user_rating, categories.category
+  SELECT resources.id, resources.user_id, users.username as author, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = $2 group by resources.id, ratings.rating) as user_rating, categories.category
   FROM resources
   JOIN users ON resources.user_id = users.id
   LEFT JOIN ratings AS t ON resources.id = t.resource_id
@@ -260,7 +260,7 @@ const getFullResource = function(resID, userID, db) {
   LEFT JOIN categories ON resource_categories.category_id = categories.id
   WHERE resources.id = $1
   GROUP BY resources.id, users.id, categories.category
-  `, [resID])
+  `, [resID, userID])
     .then((res) => {
       resObj = res.rows[0]; //create object with resource data
       //query database for comment data
@@ -319,6 +319,30 @@ const toggleLike = function(likeData, db) {
   };
 };
 
+const rate = function(rateData, db) {
+  let values = [rateData.newRating, rateData.resID, rateData.userID];
+  if (rateData.oldRating === 'null') {
+    return db.query(`
+    INSERT INTO ratings (resource_id, user_id, rating)
+    VALUES ($2, $3, $1)
+    RETURNING *;
+    `, values)
+    .then((res) => {
+      return res.rows[0];
+    });
+  } else {
+    return db.query(`
+    UPDATE ratings
+    SET rating = $1
+    WHERE resource_id = $2 AND user_id = $3
+    RETURNING *;
+    `, values)
+      .then((res) => {
+      return res.rows[0];
+    });
+  };
+};
+
 const getLikedResources = function(userID,db) {
   let resObject;
   return db.query(`
@@ -365,4 +389,5 @@ module.exports = {
   isLiked,
   toggleLike,
   getLikedResources,
+  rate
 };

@@ -147,6 +147,10 @@ $(document).ready(() => {
         </div>
         <span id="res-likes">Created: ${timeStr}</span>
         <span class="res-ratings">
+          <form id="rate-form" data-rating="${escape(resObj.user_rating)}">
+            <label for="rate">Rate: </label><input type="number" min="0" max="5" id="rate" name="rate">
+            <input type="hidden" id="resID" name="resID" value="${escape(resObj.id)}">
+          </form>
           <span id="my-rating">My Rating: ${escape(resObj.user_rating)}</span>
           <span id="global-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
         </span>
@@ -218,6 +222,24 @@ $(document).ready(() => {
     }).children().click(function(event) {
       event.stopPropagation();
     });
+
+    $("#rate-form").on("submit", function(event) {
+      event.preventDefault();
+      let data = {
+        ID: $('#resID').val(),
+        rating: $(this).attr("data-rating"),
+        rate: $("[name='rate']").val()
+      }
+
+      $.ajax({
+        url: "/user/rate",
+        method: "POST",
+        data: data
+      }).then((newRating) => {
+        $('#my-rating').text('My Rating: ' + newRating.rating.toString());
+      }).catch(err => console.log("RATE FORM AJAX ERR:", err.message));
+
+    })
   };
 
   const appendNewComment = function(comment) {
