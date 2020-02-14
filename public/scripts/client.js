@@ -369,7 +369,7 @@ $(document).ready(() => {
 
 
 //This renders the drop down menu for the new resources item
-$("#fetch-cats").on("click", function(event) {
+/* $("#fetch-cats").on("click", function(event) {
     event.preventDefault();
     $.ajax({
       url: "/user/categories",
@@ -377,7 +377,7 @@ $("#fetch-cats").on("click", function(event) {
     }).then((catData) => {
       renderDropDown(catData,dropDwnCatsFormat2,dropDownContainer2);
     });
-  });
+  }); */ //This was moved into the new resources event listener.
 
 
 
@@ -549,7 +549,15 @@ $("#fetch-cats").on("click", function(event) {
   $("#newresource").on("click", function(event) {
     event.preventDefault();
     $("#resource-form").slideToggle("fast", () => {});
-    $("#title").focus();
+    $("#restitle").focus();
+    //This renders the drop down menu for the new resources item
+    $.ajax({
+      url: "/user/categories",
+      method: "GET"
+    }).then((catData) => {
+      renderDropDown(catData,dropDwnCatsFormat2,dropDownContainer2);
+    });
+
   });
 
   $("body").on("click", "#cancel-form", function(event) {

@@ -17,6 +17,9 @@ display:flex;
 align-items: center;
 }
 
+#myprofile {
+  margin-right: 2em;
+}
 
 #filomath {
   left: 45%;

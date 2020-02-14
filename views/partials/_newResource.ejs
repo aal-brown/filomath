@@ -1,25 +1,30 @@
 <form class="new-resource" action="/user/newres" method="POST">
   <h3>Create New Resource</h3>
   <div class="fields">
-    <label for="title">Title: </label><input type="text" id="title" name="title">
+    <label>Title: </label>
+    <input type="text" id="restitle" name="title">
   </div>
   <div class="fields">
-    <label for="url">URL: </label><input type="url" id="url" name="url">
+    <label for="url">URL: </label>
+    <input type="url" id="url" name="url">
   </div>
-  <div class="fields">
-    <label for="category">Category: </label>
+  <div class="fields" id="category-input">
+    <label>Category: </label>
       <select id="drop-down-2" name="category">
-        <option>Pick a Category</option>
-      </select><button id="fetch-cats">Fetch</button>
+        <!-- <option>Pick a Category</option> -->
+      </select><!-- <button id="fetch-cats">Fetch</button> -->
   </div>
   <div class="fields">
-    <label for="description">Description: </label><input type="text" id="description" name="description">
+    <label>Description: </label>
+    <textarea rows="2" type="text" id="description" name="description"></textarea>
   </div>
   <div class="fields">
-    <label for="thumbnail_url">Thumbnail URL: </label><input type="url" id="thumbnail_url" name="thumbnail_url">
+    <label>Thumbnail URL: </label>
+    <input type="url" id="thumbnail_url" name="thumbnail_url">
   </div>
   <div class="fields">
-    <label for="rating">My Rating: </label><input type="number" min="0" max="5" id="rating" name="rating">
+    <label>My Rating: </label>
+    <input type="number" min="0" max="5" id="rating" name="rating">
   </div>
   <div id="submit-cancel-buttons">
     <input type="reset" id="cancel-form" value="Cancel">
