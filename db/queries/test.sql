@@ -153,7 +153,7 @@ WHERE users.id = 1; */
 
 
 /* Fetch liked resources, excluding resources where the user ID matches the current user.*/
-SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = 1 group by resources.id, ratings.rating) as user_rating, categories.category
+/* SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = 1 group by resources.id, ratings.rating) as user_rating, categories.category
   FROM resources
   JOIN users ON resources.user_id = users.id
   LEFT JOIN ratings AS t ON resources.id = t.resource_id
@@ -161,4 +161,15 @@ SELECT resources.id, resources.user_id, users.username, resources.title, resourc
   LEFT JOIN resource_categories ON resources.id = resource_categories.resource_id
   LEFT JOIN categories ON resource_categories.category_id = categories.id
   WHERE likes.user_id = 1 AND resources.user_id != 1
-  GROUP BY resources.id, users.id, categories.category;
+  GROUP BY resources.id, users.id, categories.category; */
+
+
+/* TEstni */
+SELECT users.id, users.name, users.email, users.password, (SELECT count(resources.user_id) as created_resources FROM resources WHERE user_id = 31), (SELECT count(likes.id) AS my_likes FROM likes WHERE user_id = 31), (SELECT count(comments.id) AS my_comments FROM comments WHERE user_id = 31), (SELECT count(ratings.id) AS my_ratings FROM ratings WHERE user_id = 31)
+  FROM users
+  LEFT JOIN resources ON users.id = resources.user_id
+  LEFT JOIN likes ON users.id = likes.user_id
+  LEFT JOIN comments on users.id = comments.user_id
+  LEFT JOIN ratings on users.id = ratings.user_id
+  WHERE users.id = 31
+  GROUP BY users.id;

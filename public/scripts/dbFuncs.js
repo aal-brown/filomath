@@ -112,7 +112,6 @@ const getSearchResources = function(userID, db, searchParams) {
 };
 
 const getResByCat = function(userID, db, categoryID) {
-  console.log("getResByCat")
   let resObject;
   return db.query(`
   SELECT resources.id, resources.user_id, users.username, resources.title, resources.description, resources.resource_url, resources.thumbnail_url, resources.date, (SELECT count(likes.*) from likes WHERE likes.resource_id = resources.id) as likes, avg(t.rating) as global_rating, (SELECT ratings.rating from ratings where ratings.resource_id = resources.id and ratings.user_id = $1 group by resources.id, ratings.rating) as user_rating, categories.category
@@ -140,14 +139,13 @@ const getResByCat = function(userID, db, categoryID) {
 };
 
 const getUserDetails = function(userID, db) {
-
   return db.query(`
   SELECT users.id, users.name, users.email, users.password, (SELECT count(resources.user_id) as created_resources FROM resources WHERE user_id = $1), (SELECT count(likes.id) AS my_likes FROM likes WHERE user_id = $1), (SELECT count(comments.id) AS my_comments FROM comments WHERE user_id = $1), (SELECT count(ratings.id) AS my_ratings FROM ratings WHERE user_id = $1)
   FROM users
-  JOIN resources ON users.id = resources.user_id
-  JOIN likes ON users.id = likes.user_id
-  JOIN comments on users.id = comments.user_id
-  JOIN ratings on users.id = ratings.user_id
+  LEFT JOIN resources ON users.id = resources.user_id
+  LEFT JOIN likes ON users.id = likes.user_id
+  LEFT JOIN comments on users.id = comments.user_id
+  LEFT JOIN ratings on users.id = ratings.user_id
   WHERE users.id = $1
   GROUP BY users.id;
   `,[userID])
@@ -193,7 +191,6 @@ const changeName = function(userID, newName, db) {
 };
 
 const changeEmail = function(userID, newEmail, db) {
-  console.log(newEmail)
   return db.query(`
   UPDATE users
   SET email = $2

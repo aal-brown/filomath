@@ -117,7 +117,9 @@ module.exports = function(userRouter, database) {
 
     if (userID) {
       res.session = null;
+      return;
     }
+
     const userInfo = req.body;
 
     checkUsername(userInfo.username, database)
@@ -133,12 +135,11 @@ module.exports = function(userRouter, database) {
 
           addUser(userInfo, database)
             .then((user) => {
-
               if (!user) {
                 res.redirect(303,"/main)");
                 return;
               }
-              req.session.userId = user.id;
+              req.session.userID = user.id;
               res.redirect("/user/");
             })
             .catch((err) => res.send(err));
