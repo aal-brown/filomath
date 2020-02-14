@@ -256,6 +256,8 @@ module.exports = function(userRouter, database) {
   });
 
   userRouter.post("/rate", (req, res) => {
+    console.log(typeof req.body.rating);
+
     let rateData = {
       resID: req.body.ID,
       userID: req.session.userID,

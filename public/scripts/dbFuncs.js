@@ -318,7 +318,8 @@ const toggleLike = function(likeData, db) {
 
 const rate = function(rateData, db) {
   let values = [rateData.newRating, rateData.resID, rateData.userID];
-  if (rateData.oldRating === 'null') {
+  console.log(rateData.oldRating);
+  if (rateData.oldRating === "null") {
     return db.query(`
     INSERT INTO ratings (resource_id, user_id, rating)
     VALUES ($2, $3, $1)

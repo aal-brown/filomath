@@ -18,7 +18,10 @@ body {
 
 
 .container {
-  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/demo-bg.jpg");
+  /* background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/demo-bg.jpg"); */
+  background-image: url("http://www.baltana.com/files/wallpapers-2/Teal-Powerpoint-Background-Pictures-07316.jpg");
+  /* background-image: url("https://wallpaperplay.com/walls/full/b/2/f/95056.jpg"); */
+
 }
 
 .main-title {

@@ -8,7 +8,10 @@ body {
   align-items: center;
   justify-content: center;
   background-color: #F9F1E9;
+  /* background-image: url("https://www.publicdomainpictures.net/pictures/260000/velka/triangles-grid-background.jpg") */
+  background-image: url("https://pixabay.com/get/55e4dc4b4e4fb14cf6dd867bc32d3078083edbed5256714b742979/honeycomb-34984.png");
 }
+
 
 main {
   display: flex;

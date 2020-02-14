@@ -572,7 +572,7 @@ $(document).ready(() => {
     event.preventDefault();
     $("#resource-form").slideToggle("fast", () => {});
     $("#restitle").focus();
-    //This renders the drop down menu for the new resources item
+    //This renders the drop down menu for the create new resources "category" item
     $.ajax({
       url: "/user/categories",
       method: "GET"
