@@ -148,8 +148,9 @@ $(document).ready(() => {
         <span id="res-likes">Created: ${timeStr}</span>
         <span class="res-ratings">
           <form id="rate-form" data-rating="${escape(resObj.user_rating)}">
-            <label for="rate">Rate: </label><input type="number" min="0" max="5" id="rate" name="rate">
+            <input type="number" min="0" max="5" id="rate" name="rate">
             <input type="hidden" id="resID" name="resID" value="${escape(resObj.id)}">
+            <input type="submit" value="Rate">
           </form>
           <span id="my-rating">My Rating: ${escape(resObj.user_rating)}</span>
           <span id="global-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
@@ -235,11 +236,20 @@ $(document).ready(() => {
         url: "/user/rate",
         method: "POST",
         data: data
-      }).then((newRating) => {
-        $('#my-rating').text('My Rating: ' + newRating.rating.toString());
-      }).catch(err => console.log("RATE FORM AJAX ERR:", err.message));
-
-    })
+      }).then(() => {
+        //$('#my-rating').text('My Rating: ' + newRating.rating.toString());
+        $.ajax({
+          url: "/user/resource",
+          method: "POST",
+          data: {ID: data.ID}
+        }).then( function(resourceData) {
+          $("#single-resource").empty();
+          loadFullResource(resourceData);
+          $("#single-resource").slideDown("slow",() => {});
+          $("#resources-container").slideUp("slow", () => {}); //hides all resource containers
+        }).catch(err => console.log("RENDER FULL RESOURCE ERR", err.message));
+      });
+    });
   };
 
   const appendNewComment = function(comment) {
