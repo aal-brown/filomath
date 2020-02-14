@@ -204,6 +204,7 @@ $(document).ready(() => {
 
     $(".comment-form").on("submit", function(event) {
       event.preventDefault();
+      
       let message = $("[name='commentSubmission']").val();
       let resID = $("[name='ID']").val();
 
@@ -214,6 +215,7 @@ $(document).ready(() => {
       }).then(function(commentData) {
         appendNewComment(commentData);
       }).catch(err => console.log(err.message));
+      $(this).find("input[type=text], textarea").val("");
     });
 
     $("#return").on("click", function(event) {
