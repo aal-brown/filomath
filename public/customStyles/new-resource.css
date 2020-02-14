@@ -16,6 +16,11 @@
   margin-bottom: 1em;
   border: solid;
   border-radius: 0.5em;
+  background-color:#F9F1E9;
+}
+
+.new-resource:hover {
+  background-color: #ffffff;
 }
 
 .fields {

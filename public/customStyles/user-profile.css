@@ -2,7 +2,7 @@
   margin-top:1em;
   display: flex;
   flex-direction: column;
-  width: 75%;
+  width: 60%;
   height: 100%;
   border: solid;
   border-radius: 0.5em;
@@ -10,6 +10,7 @@
   justify-content: space-evenly;
   font-size: 1.5em;
   background-color: #F9F1E9;
+  padding-top: 2em;
 }
 
 /* #main-cont {
@@ -33,7 +34,7 @@
   align-items: center;
   justify-content: space-evenly;
   width: 100%;
-  height: 10em;
+  height: 6em;
 }
 
 .profile-content {

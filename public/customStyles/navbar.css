@@ -6,12 +6,19 @@
 
 }
 
+.bg-dark {
+  background-color:#8ea0b9;
+}
 #main {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 5em;
-  background-image: url("http://scalesofjusticeacademy.org/wp-content/uploads/revslider/ecorecycle/black-gradient-texture-lighter-in-612762-1440x900.jpg")
+  /* background-color: #8ea0b9; */
+  /* background-image: url("http://scalesofjusticeacademy.org/wp-content/uploads/revslider/ecorecycle/black-gradient-texture-lighter-in-612762-1440x900.jpg") */
+  /* background-image: url("https://pixabay.com/get/57e4d6434b52a914ea9d8578c52e337b1239c3e45659704e752b78d391/triangles-1430105.png");
+  background-size: cover; */
+
 }
 
 #right-side-content {
