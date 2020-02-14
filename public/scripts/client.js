@@ -125,11 +125,14 @@ $(document).ready(() => {
       <header>
         <div id="top">
           <input id="return" type="submit" value="Return">
+          <span id="res-category">${escape(resObj.category)}</span>
+        </div>
+        <div id="titleblock">
           <span id="title">${escape(resObj.title)}</span>
         </div>
         <div>
           <span id="res-author">Created By: ${escape(resObj.author)}</span>
-          <span id="res-category">${escape(resObj.category)}</span>
+
         </div>
       </header>
 
@@ -152,8 +155,8 @@ $(document).ready(() => {
             <input type="hidden" id="resID" name="resID" value="${escape(resObj.id)}">
             <input type="submit" value="Rate">
           </form>
-          <span id="my-rating">My Rating: ${escape(resObj.user_rating)}</span>
-          <span id="global-rating">Global Rating: ${escape(Number(resObj.global_rating).toFixed(1))}</span>
+          <span id="my-rating"><b>My Rating:</b> ${escape(resObj.user_rating)}</span>
+          <span id="global-rating"><b>Global Rating:</b> ${escape(Number(resObj.global_rating).toFixed(1))}</span>
         </span>
       </span>
       <span id="comment-section">
