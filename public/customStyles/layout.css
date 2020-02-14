@@ -33,7 +33,7 @@ main {
 }
 
 #resource-form {
-  display: none;
+  display: flex;
 }
 
 #single-resource{

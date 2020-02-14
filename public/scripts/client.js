@@ -158,7 +158,7 @@ $(document).ready(() => {
       </span>
       <span id="comment-section">
         <form class="comment-form">
-          <label for="commentSubmission"></label><input type="text" id="commentSubmission" name="commentSubmission" placeholder="Leave a comment">
+          <label for="commentSubmission"></label><textarea rows="2" type="text" id="commentSubmission" name="commentSubmission" placeholder="Leave a comment"></textarea>
           <input type="hidden" id="ID" name="ID" value="${escape(resObj.id)}">
           <input type="submit" value="Post">
         </form>
@@ -401,7 +401,7 @@ $(document).ready(() => {
 
 
 //This renders the drop down menu for the new resources item
-/* $("#fetch-cats").on("click", function(event) {
+$("#fetch-cats").on("click", function(event) {
     event.preventDefault();
     $.ajax({
       url: "/user/categories",
@@ -409,7 +409,7 @@ $(document).ready(() => {
     }).then((catData) => {
       renderDropDown(catData,dropDwnCatsFormat2,dropDownContainer2);
     });
-  }); */ //This was moved into the new resources event listener.
+  });
 
 
 
@@ -580,16 +580,10 @@ $(document).ready(() => {
   //this toggles the new resource form to show or hide it
   $("#newresource").on("click", function(event) {
     event.preventDefault();
-    $("#resource-form").slideToggle("fast", () => {});
-    $("#restitle").focus();
-    //This renders the drop down menu for the create new resources "category" item
-    $.ajax({
-      url: "/user/categories",
-      method: "GET"
-    }).then((catData) => {
-      renderDropDown(catData,dropDwnCatsFormat2,dropDownContainer2);
+    $(".new-resource").slideToggle("fast", function() {
+      //this.css("display", "flex");
     });
-
+    $("#title").focus();
   });
 
   $("body").on("click", "#cancel-form", function(event) {
