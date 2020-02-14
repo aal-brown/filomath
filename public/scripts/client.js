@@ -54,7 +54,7 @@ $(document).ready(() => {
         </div>
       </header>
       <span id="body">
-        <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}">
+        <img id="thumbnail-img" src="${escape(resObj.thumbnail_url)}" onError="this.onerror=null;this.src='../../public/images/no-thumb.png';">
         <span id="description">${escape(resObj.description)}</span>
       </span>
       <footer>
@@ -134,7 +134,7 @@ $(document).ready(() => {
       </header>
 
       <span class="resource-info">
-        <img id="res-img" src="${escape(resObj.thumbnail_url)}">
+        <img id="res-img" src="${escape(resObj.thumbnail_url)}" onError="this.onerror=null;this.src='../../public/images/no-thumb.png';">
         <span id="desc-box">
           <span id="res-description">${escape(resObj.description)}</span>
           <span id="res-url">${escape(resObj.resource_url)}</span>
